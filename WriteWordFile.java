@@ -1,3 +1,5 @@
+package helper;
+
 import java.io.File;
 import java.io.FileOutputStream;
 
@@ -15,7 +17,7 @@ public class WriteWordFile {
 	public static int customerIDFontSize = 15;	//Font storlek för kund-id
 	
 	//Skriv ett standardiserat Word dokument
-	public void writeDocument(String filename, String id) throws Exception{
+	public static void writeDocument(String filename, String id, String customerName) throws Exception{
 		// Skapa ett nytt word-dokument
 		XWPFDocument doc = new XWPFDocument();
 		FileOutputStream file = new FileOutputStream(new File(filename));
@@ -23,7 +25,7 @@ public class WriteWordFile {
 		// Skriv dokumentet
 		writeLogo(doc);		
 		writeCustomerID(doc, id);	
-		writeMessage(doc);
+		writeMessage(doc, customerName);
 				
 		// Skriv data till angiven fil
 		doc.write(file);
@@ -63,13 +65,13 @@ public class WriteWordFile {
 		customerRun.setText(id);
 	}
 	
-	public static void writeMessage(XWPFDocument doc) {
+	public static void writeMessage(XWPFDocument doc, String name) {
 		// Skapa en ny paragraf där meddelandet ska skrivas
 		XWPFParagraph message = doc.createParagraph();
 		XWPFRun messageRun = message.createRun();
 		
 		//Skriv meddelande
-		messageRun.setText("Hej kära kund!");
+		messageRun.setText("Hej " + name + "!");
 		messageRun.addBreak();
 		messageRun.setText("Bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla");
 		messageRun.addBreak();messageRun.addBreak();

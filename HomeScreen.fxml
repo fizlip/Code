@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane fx:id="menuPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="567.0" prefWidth="1070.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.HomeScreenController">
+   <children>
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="63.0" layoutX="14.0" layoutY="14.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.25" width="1046.0" />
+      <Text fill="#9b9b9b" layoutX="259.0" layoutY="30.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Sålt:">
+         <font>
+            <Font name="Times New Roman" size="12.0" />
+         </font>
+      </Text>
+      <Text fill="#9b9b9b" layoutX="782.0" layoutY="30.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Intjänat:">
+         <font>
+            <Font name="Times New Roman" size="12.0" />
+         </font>
+      </Text>
+      <Text fx:id="soldTodayText" layoutX="259.0" layoutY="71.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0">
+         <font>
+            <Font name="Times New Roman" size="36.0" />
+         </font>
+      </Text>
+      <Text layoutX="782.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0">
+         <font>
+            <Font name="Times New Roman" size="36.0" />
+         </font>
+      </Text>
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="319.0" layoutX="264.0" layoutY="109.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.25" width="535.0" />
+      <LineChart fx:id="salesChart" layoutY="417.0" prefHeight="150.0" prefWidth="1070.0">
+        <xAxis>
+          <CategoryAxis side="BOTTOM" />
+        </xAxis>
+        <yAxis>
+          <NumberAxis side="LEFT" />
+        </yAxis>
+      </LineChart>
+      <Text fx:id="serverText" layoutX="307.0" layoutY="125.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text">
+         <font>
+            <Font name="Times New Roman" size="18.0" />
+         </font>
+      </Text>
+      <TextField fx:id="serverComField" layoutX="290.0" layoutY="391.0" onKeyPressed="#sendMessage" prefHeight="25.0" prefWidth="490.0" />
+   </children>
+</AnchorPane>

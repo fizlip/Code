@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.Group?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane fx:id="custPane" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="105.0" prefWidth="1213.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.CustomerPaneController">
+   <children>
+      <Line endX="1115.0" startX="-100.0" stroke="#c1bfbf" translateX="100.0" translateY="95.0" />
+      <Group layoutX="-88.0" layoutY="-5.0">
+         <children>
+            <Text fx:id="salesManText" fill="#7c7c7c" layoutX="309.0" layoutY="66.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Säljare:" translateY="20.0">
+               <font>
+                  <Font name="Calibri Italic" size="14.0" />
+               </font>
+            </Text>
+            <Text fx:id="latestChangeTextNew" fill="#7c7c7c" layoutX="309.0" layoutY="41.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Senaste ändring: NÅGOT av NÅGON" translateY="25.0">
+               <font>
+                  <Font name="Calibri" size="12.0" />
+               </font>
+            </Text>
+            <Text fx:id="searchResultText" layoutX="309.0" layoutY="26.0" onMouseEntered="#mouseEnteredAction" onMouseExited="#mouseExitAction" onMousePressed="#openCustomerWindowAction" strokeType="OUTSIDE" strokeWidth="0.0" text="Kundnummer: Förnamn Mellannamn Efternamn" translateY="20.0">
+               <font>
+                  <Font name="Times New Roman" size="18.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Text>
+            <CheckBox layoutX="276.0" layoutY="13.0" mnemonicParsing="false" prefHeight="10.0" prefWidth="14.0" translateY="20.0" />
+            <Text fx:id="serviceTextNew" fill="#02a5bb" layoutX="309.0" layoutY="46.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tjänst: TJÄNST" translateY="-25.0">
+               <font>
+                  <Font name="Calibri" size="14.0" />
+               </font>
+            </Text>
+            <Text fx:id="salesManNameText" fill="#545353" layoutX="361.0" layoutY="86.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Namn">
+               <font>
+                  <Font name="Calibri Bold" size="14.0" />
+               </font>
+            </Text>
+         </children>
+      </Group>
+      <Group fx:id="nextPageGroup" layoutX="516.0" layoutY="79.0" onMouseEntered="#mouseEnterNextPage" onMouseExited="#mouseExitNextPage" onMousePressed="#nextPagePressed" visible="false">
+         <children>
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="30.0" stroke="#d8d8d8" strokeType="INSIDE" width="200.0" />
+            <Text fx:id="nextPageText" fill="#757575" layoutX="67.0" layoutY="20.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Visa mer" translateX="-2.0" translateY="2.0">
+               <font>
+                  <Font name="Times New Roman" size="18.0" />
+               </font>
+            </Text>
+         </children>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </Group>
+   </children>
+</AnchorPane>

@@ -1,3 +1,5 @@
+package helper;
+
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -8,7 +10,7 @@ import org.json.simple.parser.ParseException;
 
 public class ReadJSONFile {
 	
-	public static final String filePath = "D:\\register.json";
+	public static final String filePath = "C:\\Users\\f_ill\\eclipse-workspace\\UsecDashboard\\src\\application\\Usec/register.json";
 	
 	public static void main(String[] args) {
 		try {
@@ -20,7 +22,6 @@ public class ReadJSONFile {
 			
 			// get a String from the JSON object
 			String jsonData = jsonObject.toJSONString();
-			System.out.println(jsonData);
 		}catch(FileNotFoundException ex) {
 			ex.printStackTrace();
 		}catch(IOException ex) {
