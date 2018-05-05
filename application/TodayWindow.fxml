@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.Group?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="657.0" prefWidth="1290.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/9.0.1">
+  <columnConstraints>
+    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+  </columnConstraints>
+  <rowConstraints>
+    <RowConstraints maxHeight="388.66667683919275" minHeight="10.0" prefHeight="102.66665903727213" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="554.6666742960613" minHeight="10.0" prefHeight="554.6666742960613" vgrow="SOMETIMES" />
+  </rowConstraints>
+   <children>
+      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="2018-04-08" translateX="20.0">
+         <font>
+            <Font name="BodoniFLF-Roman" size="72.0" />
+         </font>
+      </Text>
+      <Group translateX="400.0">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Sålt: X" translateX="350.0">
+               <font>
+                  <Font name="BodoniFLF-Roman" size="36.0" />
+               </font>
+            </Text>
+            <Text layoutY="30.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Intjänat: X" translateX="350.0">
+               <font>
+                  <Font name="BodoniFLF-Roman" size="36.0" />
+               </font>
+            </Text>
+         </children>
+      </Group>
+      <BarChart maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="393.0" prefWidth="635.0" translateY="-70.0" GridPane.rowIndex="1">
+        <xAxis>
+          <CategoryAxis side="BOTTOM" />
+        </xAxis>
+        <yAxis>
+          <NumberAxis side="LEFT" />
+        </yAxis>
+      </BarChart>
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="330.0" stroke="#89c5f7" strokeType="INSIDE" translateX="700.0" translateY="-70.0" width="562.0" GridPane.rowIndex="1" />
+      <LineChart maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="147.0" prefWidth="1260.0" translateY="200.0" GridPane.rowIndex="1">
+        <xAxis>
+          <CategoryAxis side="BOTTOM" />
+        </xAxis>
+        <yAxis>
+          <NumberAxis side="LEFT" />
+        </yAxis>
+      </LineChart>
+   </children>
+</GridPane>

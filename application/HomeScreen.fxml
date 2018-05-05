@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.Group?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane fx:id="menuPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="567.0" prefWidth="1200.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.HomeScreenController">
+   <children>
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="63.0" layoutX="14.0" layoutY="14.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.25" width="1168.0" />
+      <Group layoutX="310.0" layoutY="41.0">
+         <children>
+            <Text fill="#9b9b9b" strokeType="OUTSIDE" strokeWidth="0.0" text="Sålt:" translateY="-10.0">
+               <font>
+                  <Font name="Times New Roman" size="12.0" />
+               </font>
+            </Text>
+            <Text fx:id="soldTodayText" layoutY="19.61328125" strokeType="OUTSIDE" strokeWidth="0.0" text="0">
+               <font>
+                  <Font name="Times New Roman" size="36.0" />
+               </font>
+            </Text>
+         </children>
+      </Group>
+      <Group layoutX="868.0" layoutY="33.0">
+         <children>
+            <Text fill="#9b9b9b" strokeType="OUTSIDE" strokeWidth="0.0" text="Intjänat:">
+               <font>
+                  <Font name="Times New Roman" size="12.0" />
+               </font>
+            </Text>
+            <Text layoutX="5.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0">
+               <font>
+                  <Font name="Times New Roman" size="36.0" />
+               </font>
+            </Text>
+         </children>
+      </Group>
+      <Group layoutX="333.0" layoutY="96.0">
+         <children>
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="319.0" layoutY="0.0400390625" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.25" translateX="-300.0" width="1117.0" />
+            <Text fx:id="serverText" layoutX="42.0" layoutY="16.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" translateX="-250.0">
+               <font>
+                  <Font name="Times New Roman" size="18.0" />
+               </font>
+            </Text>
+            <TextField fx:id="serverComField" layoutY="282.0400390625" onKeyPressed="#sendMessage" prefHeight="25.0" prefWidth="1000.0" translateX="-250.0" />
+            <ScrollPane fx:id="messageScrollPane" hbarPolicy="NEVER" layoutX="-250.0" layoutY="20.0" prefHeight="262.0" prefWidth="1001.0" vbarPolicy="NEVER">
+              <content>
+                <AnchorPane fx:id="messagePane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="259.0" prefWidth="999.0" />
+              </content>
+            </ScrollPane>
+         </children>
+      </Group>
+      <LineChart fx:id="salesChart" layoutY="417.0" prefHeight="150.0" prefWidth="1168.0">
+        <xAxis>
+          <CategoryAxis side="BOTTOM" />
+        </xAxis>
+        <yAxis>
+          <NumberAxis side="LEFT" />
+        </yAxis>
+      </LineChart>
+   </children>
+</AnchorPane>

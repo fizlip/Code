@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Group?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="900.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.RegisterController">
+   <children>
+      <GridPane layoutX="-14.0" layoutY="6.0" prefHeight="500.0" prefWidth="800.0" AnchorPane.bottomAnchor="-6.0" AnchorPane.leftAnchor="-14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="6.0">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints maxHeight="306.0" minHeight="10.0" prefHeight="280.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="313.9999796549479" minHeight="10.0" prefHeight="189.33333333333331" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="210.33332316080725" minHeight="0.0" prefHeight="68.66666666666669" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="137.33333333333331" minHeight="0.0" prefHeight="44.00004069010413" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Group translateX="40.0" translateY="-75.0">
+               <children>
+                  <Label layoutY="2.6666641235351562" text="Namn: ">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="nameField" layoutX="77.0" maxHeight="-Infinity" maxWidth="-Infinity" onAction="#initialize" prefHeight="25.0" prefWidth="309.0" promptText="För- och efternamn" />
+               </children>
+            </Group>
+            <Group translateX="450.0" translateY="-75.0">
+               <children>
+                  <Label layoutY="2.6666641235351562" text="Personnummer:" translateX="390.0">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="personalIdField" maxHeight="-Infinity" maxWidth="-Infinity" onAction="#initialize" prefHeight="25.0" prefWidth="309.0" promptText="ÅÅMMDD-XXXX" translateX="500.0" />
+               </children>
+            </Group>
+            <Group translateX="525.0" translateY="5.0" GridPane.rowIndex="1">
+               <children>
+                  <Label layoutX="121.0" layoutY="3.0" text="Pris: " translateX="390.0">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="priceField" maxHeight="-Infinity" maxWidth="-Infinity" onAction="#initialize" prefHeight="25.0" prefWidth="309.0" promptText="per styck" translateX="550.0" />
+               </children>
+            </Group>
+            <Group translateX="40.0" GridPane.rowIndex="2">
+               <children>
+                  <Label layoutY="2.6666717529296875" text="Fakturering:">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <DatePicker layoutX="-21.0" promptText="Första fakturering" style="-fx-background-color: white;" translateX="105.0" />
+               </children>
+            </Group>
+            <Button fx:id="finished" mnemonicParsing="false" onAction="#registerNewCustomerAction" onKeyPressed="#registerEnterKey" prefHeight="10.0" prefWidth="111.0" text="Klar" translateX="410.0" GridPane.rowIndex="3">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets></Button>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Kund" translateX="410.0" translateY="-140.0">
+               <font>
+                  <Font name="BodoniFLF-Roman" size="36.0" />
+               </font>
+            </Text>
+            <Line endX="815.0" startX="-100.0" stroke="#026bff" translateY="-120.0" />
+            <Line endX="815.0" layoutX="131.0" layoutY="71.0" startX="-100.0" stroke="#00419b" translateY="-70.0" GridPane.rowIndex="1" />
+            <Text layoutX="30.0" layoutY="91.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Order" translateX="400.0" translateY="-90.0" GridPane.rowIndex="1">
+               <font>
+                  <Font name="BodoniFLF-Roman" size="36.0" />
+               </font>
+            </Text>
+            <Group layoutX="10.0" layoutY="101.0" translateX="40.0" translateY="-45.0">
+               <children>
+                  <Label layoutY="2.6666641235351562" text="Telefon:">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="telField" layoutX="77.0" maxHeight="-Infinity" maxWidth="-Infinity" onAction="#initialize" prefHeight="25.0" prefWidth="309.0" />
+               </children>
+            </Group>
+            <Group layoutX="10.0" layoutY="130.0" translateX="40.0" translateY="25.0">
+               <children>
+                  <Label layoutY="2.6666641235351562" text="Postnr:" translateY="10.0">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="postCodeField" layoutX="76.0" maxHeight="-Infinity" maxWidth="-Infinity" onAction="#initialize" prefHeight="25.0" prefWidth="309.0" translateY="10.0" />
+               </children>
+            </Group>
+            <Group layoutX="10.0" layoutY="130.0" translateX="525.0" translateY="50.0">
+               <children>
+                  <Label layoutX="76.0" layoutY="3.0" text="Ort:" translateY="10.0">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="ortField" layoutX="53.0" maxHeight="-Infinity" maxWidth="-Infinity" onAction="#initialize" prefHeight="25.0" prefWidth="309.0" translateX="60.0" translateY="10.0" />
+               </children>
+            </Group>
+            <Group layoutX="10.0" layoutY="130.0" translateX="40.0" translateY="85.0">
+               <children>
+                  <Label layoutY="2.6666641235351562" text="E-mail:" translateY="10.0">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="emailField" layoutX="76.0" maxHeight="-Infinity" maxWidth="-Infinity" onAction="#initialize" prefHeight="25.0" prefWidth="309.0" translateY="10.0" />
+               </children>
+            </Group>
+            <Group layoutX="10.0" layoutY="130.0" translateX="480.0" translateY="85.0">
+               <children>
+                  <Label layoutX="30.0" layoutY="3.0" text="Mailfaktura:" translateY="10.0">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="mailBillField" layoutX="53.0" maxHeight="-Infinity" maxWidth="-Infinity" onAction="#initialize" prefHeight="25.0" prefWidth="309.0" translateX="60.0" translateY="10.0" />
+               </children>
+            </Group>
+            <Text layoutX="10.0" layoutY="150.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Personinfo" translateX="30.0" translateY="-100.0" underline="true">
+               <font>
+                  <Font name="BodoniFLF-Roman" size="18.0" />
+               </font>
+            </Text>
+            <Text layoutX="10.0" layoutY="148.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Adressinfo" translateX="30.0" translateY="-5.0" underline="true">
+               <font>
+                  <Font name="BodoniFLF-Roman" size="18.0" />
+               </font>
+            </Text>
+            <MenuButton fx:id="salesItem" mnemonicParsing="false" prefHeight="25.0" prefWidth="307.0" style="-fx-background-color: white; -fx-border-color: gray;" text="Tjänst" translateX="125.0" translateY="-25.0" GridPane.rowIndex="1">
+              <items>
+                <MenuItem mnemonicParsing="false" text="Nyckelbricka" />
+                <MenuItem mnemonicParsing="false" text="Annat" />
+              </items>
+            </MenuButton>
+            <Group layoutX="10.0" layoutY="301.0" translateX="40.0" translateY="5.0" GridPane.rowIndex="1">
+               <children>
+                  <Label layoutY="2.6666641235351562" text="Antal:">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="amountField" layoutX="54.0" maxHeight="-Infinity" maxWidth="-Infinity" onAction="#initialize" prefHeight="25.0" prefWidth="309.0" translateX="30.0" />
+               </children>
+            </Group>
+            <Group layoutX="10.0" layoutY="105.0" translateX="40.0" translateY="55.0">
+               <children>
+                  <TextField fx:id="adressField" layoutX="76.0" maxHeight="-Infinity" maxWidth="-Infinity" onAction="#initialize" prefHeight="25.0" prefWidth="309.0" translateY="10.0" />
+                  <Label layoutY="2.6666641235351562" text="Adress:" translateY="10.0">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+               </children>
+            </Group>
+            <Group translateX="40.0" translateY="60.0" GridPane.rowIndex="1">
+               <children>
+                  <Label text="Kommentar:">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <TextArea fx:id="commentField" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="69.0" prefWidth="749.0" translateX="85.0" />
+               </children>
+            </Group>
+            <MenuButton mnemonicParsing="false" style="-fx-background-color: white; -fx-border-color: gray;" text="Betalning" translateX="300.0" GridPane.rowIndex="2">
+              <items>
+                <MenuItem mnemonicParsing="false" text="Årsvis" />
+                <MenuItem mnemonicParsing="false" text="Månadsvis" />
+              </items>
+            </MenuButton>
+            <Group translateX="450.0" GridPane.rowIndex="2">
+               <children>
+                  <Text layoutY="0.66668701171875" strokeType="OUTSIDE" strokeWidth="0.0" text="Samlatalkvalitet:" translateX="450.0">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Text>
+                  <Rectangle fx:id="box1" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="20.0" onMouseEntered="#boxEntered" onMouseExited="#boxExited" onMousePressed="#boxSelected" stroke="GREY" strokeType="INSIDE" translateX="560.0" translateY="-15.0" width="20.0" />
+                  <Rectangle fx:id="box2" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="20.0" onMouseEntered="#boxEntered" onMouseExited="#boxExited" onMousePressed="#boxSelected" stroke="GREY" strokeType="INSIDE" translateX="590.0" translateY="-15.0" width="20.0" />
+                  <Rectangle fx:id="box3" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="20.0" layoutX="600.0" layoutY="-15.0" onMouseEntered="#boxEntered" onMouseExited="#boxExited" onMousePressed="#boxSelected" stroke="GREY" strokeType="INSIDE" translateX="20.0" width="20.0" />
+                  <Rectangle fx:id="box4" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="20.0" layoutX="610.0" layoutY="-15.0" onMouseEntered="#boxEntered" onMouseExited="#boxExited" onMousePressed="#boxSelected" stroke="GREY" strokeType="INSIDE" translateX="40.0" width="20.0" />
+                  <Rectangle fx:id="box5" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="20.0" layoutX="650.0" layoutY="-15.0" onMouseEntered="#boxEntered" onMouseExited="#boxExited" onMousePressed="#boxSelected" stroke="GREY" strokeType="INSIDE" translateX="30.0" width="20.0" />
+               </children>
+            </Group>
+         </children>
+         <padding>
+            <Insets bottom="10.0" top="10.0" />
+         </padding>
+      </GridPane>
+   </children>
+</AnchorPane>
