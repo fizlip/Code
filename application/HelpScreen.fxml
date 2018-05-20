@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.TextFlow?>
+
+<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="2000.0" prefWidth="500.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1">
+  <columnConstraints>
+    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+  </columnConstraints>
+  <rowConstraints>
+      <RowConstraints maxHeight="1.7976931348623157E308" minHeight="0.0" prefHeight="64.66666984558105" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="1.7976931348623157E308" minHeight="70.0" prefHeight="90.0" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="1.7976931348623157E308" minHeight="100.0" prefHeight="140.0" valignment="TOP" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="1.7976931348623157E308" minHeight="70.0" prefHeight="90.0" valignment="TOP" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="1.7976931348623157E308" minHeight="100.0" prefHeight="140.0" valignment="TOP" vgrow="NEVER" />
+      <RowConstraints maxHeight="1.7976931348623157E308" minHeight="-Infinity" prefHeight="90.0" valignment="TOP" vgrow="NEVER" />
+      <RowConstraints maxHeight="1.7976931348623157E308" minHeight="100.0" prefHeight="140.0" valignment="TOP" vgrow="NEVER" />
+      <RowConstraints maxHeight="1.7976931348623157E308" minHeight="70.0" prefHeight="90.0" valignment="TOP" vgrow="NEVER" />
+      <RowConstraints maxHeight="1.7976931348623157E308" minHeight="100.0" prefHeight="140.0" valignment="TOP" vgrow="NEVER" />
+      <RowConstraints maxHeight="1.7976931348623157E308" minHeight="100.0" prefHeight="140.0" valignment="TOP" vgrow="NEVER" />
+      <RowConstraints maxHeight="1.7976931348623157E308" minHeight="70.0" prefHeight="90.0" valignment="TOP" vgrow="NEVER" />
+      <RowConstraints maxHeight="1.7976931348623157E308" minHeight="70.0" prefHeight="90.0" valignment="TOP" vgrow="NEVER" />
+      <RowConstraints maxHeight="1.7976931348623157E308" minHeight="200.0" prefHeight="238.333251953125" valignment="TOP" vgrow="NEVER" />
+      <RowConstraints maxHeight="1.7976931348623157E308" minHeight="51.666748046875" prefHeight="51.666748046875" valignment="TOP" vgrow="NEVER" />
+      <RowConstraints maxHeight="1.7976931348623157E308" minHeight="147.99991861979174" prefHeight="561.333292643229" valignment="TOP" vgrow="NEVER" />
+  </rowConstraints>
+   <children>
+      <TextFlow lineSpacing="3.0" prefHeight="344.0" prefWidth="1200.0" GridPane.rowIndex="2" GridPane.valignment="TOP">
+         <children>
+            <Text lineSpacing="5.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Här ser man allting som som ändras i systemet, om någon gör ett sälj, makulerar eller något annat kommer det att visas i sin korresponderande färg i fönstret i mitten av hemskärmen. Under uppdaterings fönstret ser man hur mycket det har sålts för sedan användaren loggade in." wrappingWidth="221.21096801017578">
+               <font>
+                  <Font name="Times New Roman" size="14.0" />
+               </font>
+            </Text>
+         </children></TextFlow>
+      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Hem" translateX="50.0" underline="true" GridPane.rowIndex="1">
+         <font>
+            <Font name="Times New Roman" size="18.0" />
+         </font>
+      </Text>
+      <ImageView fitHeight="56.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="1">
+         <image>
+            <Image url="@home.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="47.0" fitWidth="54.0" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+         <image>
+            <Image url="@business-statistics-graphic_318-56146.jpg" />
+         </image>
+      </ImageView>
+      <Text layoutX="20.0" layoutY="50.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Statistik" translateX="50.0" underline="true" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+         <font>
+            <Font name="Times New Roman" size="18.0" />
+         </font>
+      </Text>
+      <Separator prefWidth="200.0" GridPane.rowIndex="1" GridPane.valignment="BOTTOM" />
+      <Separator layoutX="20.0" layoutY="62.0" prefWidth="200.0" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" />
+      <TextFlow prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="4">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Här samlas alla diagram som behandalr hela företaget" wrappingWidth="1180.5931091308594">
+               <font>
+                  <Font name="Times New Roman" size="14.0" />
+               </font>
+            </Text>
+         </children>
+      </TextFlow>
+      <ImageView fitHeight="47.0" fitWidth="54.0" layoutX="20.0" layoutY="112.0" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+         <image>
+            <Image url="@custServ.png" />
+         </image>
+      </ImageView>
+      <Text layoutX="20.0" layoutY="142.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Kunder" translateX="50.0" underline="true" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+         <font>
+            <Font name="Times New Roman" size="18.0" />
+         </font>
+      </Text>
+      <TextFlow layoutX="20.0" layoutY="160.0" lineSpacing="3.0" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="6">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Allting som handlar om arbetet med kunder samlas här, detta är t.ex. faktureringar och alla kunder som finns registrerade." wrappingWidth="1180.5931091308594">
+               <font>
+                  <Font name="Times New Roman" size="14.0" />
+               </font>
+            </Text>
+         </children>
+      </TextFlow>
+      <ImageView fitHeight="47.0" fitWidth="54.0" layoutX="20.0" layoutY="217.0" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="7" GridPane.valignment="CENTER">
+         <image>
+            <Image url="@customerlogo.png" />
+         </image>
+      </ImageView>
+      <Text layoutX="20.0" layoutY="247.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Kunder" translateX="50.0" underline="true" GridPane.rowIndex="7" GridPane.valignment="CENTER">
+         <font>
+            <Font name="Times New Roman" size="18.0" />
+         </font>
+      </Text>
+      <TextFlow layoutX="20.0" layoutY="273.0" lineSpacing="3.0" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="8">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Snabb info om alla ISGG säljare finns här. Detta innefattar antalet sälj, deras FSG, samt deras m-värde (alla dessa värden ges för hela deras arbetsperiod). Hela deras säljår visas också upp här." wrappingWidth="1180.5931091308594">
+               <font>
+                  <Font name="Times New Roman" size="14.0" />
+               </font>
+            </Text>
+         </children>
+      </TextFlow>
+      <Separator prefWidth="200.0" GridPane.rowIndex="5" GridPane.valignment="BOTTOM" />
+      <Separator layoutX="20.0" layoutY="269.0" prefWidth="200.0" GridPane.rowIndex="7" GridPane.valignment="BOTTOM" />
+      <Text layoutX="20.0" layoutY="404.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Sökning" underline="true" GridPane.halignment="CENTER" GridPane.rowIndex="9" GridPane.valignment="CENTER">
+         <font>
+            <Font name="Times New Roman" size="18.0" />
+         </font>
+      </Text>
+      <TextFlow lineSpacing="3.0" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="10">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="När någon ändring ska göras i registret eller om man vill hitta mer information om någonting i registret kan en sökning göras i textfältet överst på skärmen. ">
+               <font>
+                  <Font name="Times New Roman" size="14.0" />
+               </font></Text>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Nedan följer några klarifikationer över hur specifika sökningar går till.">
+               <font>
+                  <Font name="Times New Roman" size="14.0" />
+               </font>
+            </Text>
+         </children>
+      </TextFlow>
+      <Text layoutX="20.0" layoutY="659.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Huvudskärm" underline="true" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+         <font>
+            <Font name="Times New Roman" size="18.0" />
+         </font>
+      </Text>
+      <TextFlow layoutX="20.0" layoutY="1035.0" lineSpacing="3.0" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="12">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Sökningar kan göras på alla fält som definierar en kund, om man t.ex. söker på en specifik ort får man alla kunder som bor på den orten, om man söker på ett namn (förnamn, mellannamn eller efternamn) får man alla kunder med detta namnet. Genom att trycka på ett av resultaten som kommer fram får man upp kundfönstret. Detta fönster visar all viktigt information som behövs om en kund. Man kan ändra på ett redigerbart fält genom att trycka på detta, göra ändringen som man vill göra och trycka på ENTER. Som ett resultat på ändringen kommer uppdateringsknappen i det övre vänstra hörnet att lysas upp men en blå cirkel, detta upplyser användaren att en uppdatering hat detekterats och ska kommenteras. Genom att tycka på uppdateringsknappen får man upp ett kommentarfönster där man beskriver ändringen som har gjorts, då kommentaren är klart tycker man på CTRL + ENTER för att stänga kommentarfönstret och uppdatera datan i registret." wrappingWidth="370.1402587890625">
+               <font>
+                  <Font name="Times New Roman" size="14.0" />
+               </font>
+            </Text>
+         </children>
+      </TextFlow>
+      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Kundsökning" underline="true" GridPane.rowIndex="11" GridPane.valignment="CENTER">
+         <font>
+            <Font name="Times New Roman" size="18.0" />
+         </font>
+      </Text>
+      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Säljaresökning" underline="true" GridPane.rowIndex="13" GridPane.valignment="CENTER">
+         <font>
+            <Font name="Times New Roman" size="18.0" />
+         </font>
+      </Text>
+      <TextFlow lineSpacing="3.0" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="14">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Då man söker på en säljare får man dennes säljarvy fär man kan se satistik över dennes sälj, dess FSG, antal sälj, m-värde och inloggningsuppgifter. Man kan här även ändra säljarens lösenord (om den skulle ha glömt detta) och även se och ändra dess auktoritet. Anställda kan ha tre olika auktoriteter: säljare, utökad säljare och administratör. Säljare kommer att ha säljare skärmen, som skiljer sig från adminskärmen, och kommer att kunna söka på alla kunder men inte på säljare, dessutom kommer den bara kunna ändra på sina egna kunders information under den dagen som säljer har gjorts. Den utökade säljaren kan söka på alla kunder men inte på säljare och kan ändra på alla redigerbara fält. Administören kan söka på alla säljare och alla kunder samt göra ändringar hos dessa. Om en användare utan auktoritet försöker göra en ändring som denna inte är auktoriserad att göra visas ett varningsfönster som informerar användaren att ändringen som gjordes inte kommer att sparas.">
+               <font>
+                  <Font name="Times New Roman" size="14.0" />
+               </font>
+            </Text>
+         </children>
+      </TextFlow>
+   </children>
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </padding>
+</GridPane>

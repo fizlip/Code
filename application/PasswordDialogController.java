@@ -49,9 +49,13 @@ public class PasswordDialogController {
     		return;
     	}
     	try {
-			UsecController.connection.send(UsecController.user.get() + " - AUTH: " + "NEW" + ": " + oldPassword.getText() + ";" + newPassword.getText());
+			UsecController.connection.send(LoginController.userProp.get() + " - AUTH: " + "NEW" + ": " + oldPassword.getText() + ";" + newPassword.getText());
 		} catch (Exception e) {
-			e.printStackTrace();
+			try {
+				AdminController.connection.send(LoginController.userProp.get() + " - AUTH: " + "NEW" + ": " + oldPassword.getText() + ";" + newPassword.getText());
+			}catch(Exception e1) {
+				e1.printStackTrace();
+			}
 		}
     	
     }

@@ -3,15 +3,14 @@
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.Group?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.shape.Line?>
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
 <AnchorPane fx:id="custPane" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="105.0" prefWidth="1213.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.CustomerPaneController">
    <children>
-      <Line endX="1115.0" startX="-100.0" stroke="#c1bfbf" translateX="100.0" translateY="95.0" />
       <Group layoutX="-88.0" layoutY="-5.0">
          <children>
             <Text fx:id="salesManText" fill="#7c7c7c" layoutX="309.0" layoutY="66.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Säljare:" translateY="20.0">
@@ -58,5 +57,6 @@
             <Cursor fx:constant="HAND" />
          </cursor>
       </Group>
+      <Separator layoutX="551.0" layoutY="78.0" prefHeight="3.3333333333333335" prefWidth="1213.0" translateY="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.833333333333336" />
    </children>
 </AnchorPane>

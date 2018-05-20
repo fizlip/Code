@@ -35,6 +35,7 @@ public class ServerInterface extends Application{
 	private int portNumber = 55555;
 	private TextArea messages = new TextArea();
 	private Server server;
+	private int logInCount = 0;
 	
 	private Parent createContent() {
 		messages.setPrefHeight(550);
@@ -72,10 +73,16 @@ public class ServerInterface extends Application{
 	    	});
 		}
 	}
-	
+		
 	private void processMessage(String user, String[] formattedMessage) {
 		if(formattedMessage[0].equals("m")) {
 			//TODO send message to all users
+		}
+		
+		else if(formattedMessage[0].equals("INC")) {
+			messages.appendText("\n--------------------\n");
+			messages.appendText("Ny koppling");
+			inc(formattedMessage[1], user);
 		}
 		
 		else if(formattedMessage[0].equals("AUTH")) {
@@ -87,16 +94,16 @@ public class ServerInterface extends Application{
 		else if(formattedMessage[0].equals("UPDATE")) {
 			messages.appendText("\n--------------------\n");
 			messages.appendText(user + " - Uppdatera element: " + formattedMessage[1] + "\n");
-			update(formattedMessage[1], formattedMessage[2], formattedMessage[3], user);
+			update(formattedMessage[1], formattedMessage[2], formattedMessage[3], formattedMessage[4], user);
 		}
 		else if(formattedMessage[0].equals("NEW")) {
 			messages.appendText("\n--------------------\n");
 			messages.appendText(user + " - Nytt element: " + formattedMessage[1] + "\n");
-			add(formattedMessage[1], formattedMessage[2]);
+			add(formattedMessage[1], formattedMessage[2], user);
 		}
 		else if(formattedMessage[0].equals("GET")) {
 			messages.appendText("\n--------------------\n");
-			if(formattedMessage[2].equals("meny")) {
+			if(formattedMessage[2].equals("init")) {
 				messages.appendText(user + " - Säljare data: " + formattedMessage[1] + "\n");
 				getMenuData(formattedMessage[1], user);
 			}
@@ -113,12 +120,28 @@ public class ServerInterface extends Application{
 		}
 	}
 	
+	private void inc(String cmd, String user) {
+		messages.appendText("\nBörjar inkrementering...\n");
+		if(cmd.equals("LOGIN")) {
+			messages.appendText("Antal inloggade: " + connection.getConns().size() + "\n" );
+
+			messages.appendText("LOGIN...\n");
+			try {
+				connection.sendAll("INC LOGIN");
+				messages.appendText("Klart\n");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	private void authenticate(String givenUsername, String givenPassword, String user) {
-		if(Register.authenticate(givenUsername, givenPassword).equals("AUTHENTICATED")) {
+		if(!givenUsername.trim().equals("NEW") && Register.authenticate(givenUsername, givenPassword).equals("AUTHENTICATED")) {
     		AdminController.username = givenUsername;
-    		messages.appendText("Auktentiserad\n");
+    		messages.appendText("Auktentiserar...\n");
     		try {
     			connection.send("DATA START" + Register.get(givenUsername));
+    			messages.appendText("Klart\n");
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -157,11 +180,15 @@ public class ServerInterface extends Application{
     	return searchJson;
     }
 	
-	private void update(String field, String position, String data, String user) {
+	private void update(String field, String position, String data, String key, String user) {
 		messages.appendText("Uppdaterar...\n");
+		System.out.println(field + " " + position + " " + data + " " + user);
 		if(data.equals("meta data")) {
-			Register.add(field, position, data, StringUtils.capitalize(user));
-			messages.appendText("uppdaterade " + data + "i registret\n");
+			JSONObject search = Register.get(key);
+			JSONObject mData = (JSONObject) search.get("meta data");
+			String salesman = (String) mData.get("användarnamn");
+			Register.add(field, position, data, salesman);
+			messages.appendText("Uppdaterade " + position +  " för " + salesman + " i registret\n");
 			messages.appendText("Klart\n");
 			return;
 		}
@@ -171,6 +198,12 @@ public class ServerInterface extends Application{
 			if(!Register.getAuth(user).equals("1") || position.equals(user)) {
 				JSONObject customer = parseSearch(data);
 				Register.add(customer, field, field);
+				Register.addOrder();
+				try {
+					connection.send("DATA;update START" + Register.get("order"));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 				messages.appendText("lade till " + data + "i registret\n");
 				messages.appendText("Klart\n");
 			}
@@ -184,20 +217,44 @@ public class ServerInterface extends Application{
 		}
 	}
 	
-	private void add(String field, String data) {
+	private void add(String field, String data, String user) {
 		messages.appendText("Lägger till...\n");
-		JSONObject customer = parseSearch(data);
-		Register.addCustomer(customer, Integer.toString(Register.getNextId()), field);
-		messages.appendText("lade till " + data + "i registret\n");
-		messages.appendText("Klart\n");
+		if(field.equals("salesman")) {
+			String[] newUser = data.split(";");
+			Register.newSalesman(newUser[0], newUser[1], newUser[2]);
+			messages.appendText(newUser[0] + " har blivit tillagd.\n");
+			messages.appendText("Klart\n");
+			Alert alert = new Alert(AlertType.CONFIRMATION, newUser[0] + " har lagts till hos ISGG.", 
+					ButtonType.OK);
+			alert.showAndWait();
+		}
+		else {
+			JSONObject customer = parseSearch(data);
+			System.out.println(customer.toJSONString());
+			Integer id = Register.getNextId()+1;
+			customer.put("Kundnummer", id.toString());
+			messages.appendText(user + "nytt sälj\n");
+			Register.addCustomer(customer, Integer.toString(id), StringUtils.capitalize(user));
+			try {
+				messages.appendText("Skickar säljs signal\n");
+				connection.send("SALE START" + customer.toJSONString());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			messages.appendText("lade till " + data + "i registret\n");
+			messages.appendText("Klart\n");
+		}
 
 	}
 	
 	private void getMenuData(String s, String user) {
 		JSONObject result = Register.get(s);
-		messages.appendText("Skickar: " + "RESULTAT" + "\n");
+		JSONObject userData = Register.get(user);
+		messages.appendText("Skickar: " + "resultatet för " + s + "\n");
 		try {
-			connection.send("MENU START" + result);
+			connection.send("OTHER;" + s + " START" + result);
+			connection.send("OTHER;användare" + " START" + userData);
+			connection.send("CUSTOMERS;kunddata" + " START" + Register.getCustomerData());
 			messages.appendText("Klart\n");
 		} catch (Exception e) {
 			messages.appendText("Message failed to send.");
@@ -222,6 +279,33 @@ public class ServerInterface extends Application{
 				e.printStackTrace();
 			}
 		}
+		
+		if(s.split(";")[0].toLowerCase().trim().equals("försäljning")) {
+			JSONObject result = (JSONObject) Register.get("försäljning");
+			if(s.split(";")[1].equals("säljare")) {
+				try {
+					messages.appendText("Skickar: " + "SALESMEN;försäljning" + " RESULTAT" + "\n");
+					connection.send("SALESMEN;försäljning START" + result);
+					
+					messages.appendText("Klart\n");
+				} catch (Exception e) {
+					messages.appendText("Message failed to send.");
+					e.printStackTrace();
+				}
+			}
+			if(s.split(";")[1].equals("statistik")) {
+				try {
+					messages.appendText("Skickar: " + "STATS;försäljning" + " RESULTAT" + "\n");
+					connection.send("STATS;försäljning START" + result);
+					
+					messages.appendText("Klart\n");
+				} catch (Exception e) {
+					messages.appendText("Message failed to send.");
+					e.printStackTrace();
+				}
+			}
+		}
+		
 		else {
 			JSONObject result = (JSONObject) Register.get(s);
 			try {

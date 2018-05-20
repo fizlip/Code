@@ -1,5 +1,7 @@
 package application;
 
+import org.json.simple.JSONObject;
+
 public class Responder implements NewSaleListener{
 
 	@Override
@@ -10,5 +12,16 @@ public class Responder implements NewSaleListener{
 	public void newMessage() {
 		
 	}
+	
+	@Override
+	public void newOrder(JSONObject customer) {
+		
+	}
+	
+	@Override
+	public void statusUpdate() {
+		
+	}
+	
 	
 }

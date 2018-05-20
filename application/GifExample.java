@@ -23,7 +23,7 @@ public class GifExample {
 	
 	private static boolean isNewRecord = false;
 	
-	public static String filePath = "C:\\Users\\f_ill\\Downloads\\Usec\\build\\classes\\gifs\\";
+	public static String filePath = "C:\\ISGG\\gifs\\";
 	
 	public static void runGif() throws MalformedURLException {
 		checkIfRecord();

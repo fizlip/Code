@@ -29,7 +29,7 @@ public class SalesStatsController {
     private URL location;
 
     @FXML
-    private StackedBarChart<String, Integer> statusBarchart;
+    private StackedBarChart<String, Double> statusBarchart;
 
     @FXML
     private BarChart<String, Double> fsgBarchart;
@@ -87,9 +87,9 @@ public class SalesStatsController {
     	colorMapping.put("Kund", "-fx-bar-fill: #00ba3e;");
     	colorMapping.put("Fakturerad", "-fx-bar-fill: #ffd400;");
     	colorMapping.put("Order", "-fx-bar-fill: #0079ff;");
-    	for(XYChart.Series<String, Integer> info : statusBarchart.getData()) {
+    	for(XYChart.Series<String, Double> info : statusBarchart.getData()) {
     		
-    		for(XYChart.Data<String, Integer> i : info.getData()) {
+    		for(XYChart.Data<String, Double> i : info.getData()) {
     			String value = colorMapping.get(info.getName());
     			i.getNode().setStyle(value);
     		}
@@ -110,6 +110,8 @@ public class SalesStatsController {
     void initialize() {
         assert statusBarchart != null : "fx:id=\"statusBarchart\" was not injected: check your FXML file 'SalesStats.fxml'.";
         assert fsgBarchart != null : "fx:id=\"fsgBarchart\" was not injected: check your FXML file 'SalesStats.fxml'.";
+        statusBarchart.setAnimated(false);
+        fsgBarchart.setAnimated(false);
         //Charts
         getData();
         //Numbers

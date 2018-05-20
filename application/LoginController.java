@@ -16,8 +16,13 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -40,7 +45,10 @@ public class LoginController{
 	public BooleanProperty done = new SimpleBooleanProperty(false);
 	public static String user;
 	public static StringProperty userProp = new SimpleStringProperty("");
-
+	private Stage processingStage;
+	
+	/* Server ip */
+	public static String serverAdress = "127.0.0.1";
 
 	
     @FXML
@@ -59,14 +67,68 @@ public class LoginController{
     private TextField userNameField;
 
     @FXML
+    void mouseEnter(MouseEvent event) {
+    	Button b = (Button) event.getSource();
+    	b.setStyle("-fx-background-color: white; -fx-border-color: dodgerblue; -fx-border-width: 1px;");
+    }
+
+    @FXML
+    void mouseExit(MouseEvent event) {
+    	Button b = (Button) event.getSource();
+    	b.setStyle("-fx-background-color: white; -fx-border-color: gray; -fx-border-width: 1px;"); 
+    }
+    
+    @FXML
     void loginAction(ActionEvent event) {
     	String givenUsername = userNameField.getText();
     	String givenPassword = passwordField.getText();
-    	send("AUTH: " + givenUsername + ": " + givenPassword);
+    	if(givenPassword.equals("Server")) {
+    		ServerInterface server = new ServerInterface();
+    		Register.path = givenUsername;
+    		Stage stage = new Stage();
+    		try {
+				server.start(stage);
+				server.init();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+    		
+    	}
+    	else {
+    		send("AUTH: " + givenUsername + ": " + givenPassword);
+    		try {
+				TimeUnit.SECONDS.sleep(1);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+    		ProcessingController.loadProp.set("Auktentiserar...");
+    		showProcessingWindow();
+    	}
     }
     
     private boolean isDone() {
     	return done.get();
+    }
+    
+    private void showProcessingWindow() {
+    	processingStage = new Stage();
+    	try {
+	    	FXMLLoader windowLoader = new FXMLLoader(getClass().getResource("ProcessingWindow.fxml"));
+	    	GridPane window = windowLoader.load();
+    		Scene scene = new Scene(window,600,400);
+			//scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+			processingStage.initStyle(StageStyle.UNDECORATED);
+			processingStage.setAlwaysOnTop(true);
+			processingStage.setScene(scene);
+			processingStage.show();
+		}catch(IOException e) {
+			//Om inladdning misslyckas skriv ut felet i terminalen
+			e.printStackTrace();
+    	}
+    }
+    
+    private void closeProcessingWindow() {
+    	processingStage.close();
     }
     
     private void openMainWindow(String username, String screen) {
@@ -74,12 +136,25 @@ public class LoginController{
     	AdminParams.user.set(username);
     	UsecController.user.set(username);
     	try {
-			AnchorPane root = FXMLLoader.load(getClass().getResource(screen));
-    		Scene scene = new Scene(root,1290,650);
+    		ProcessingController.loadProp.set("Tar reda på skärm egenskaper...");
+    		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    		GridPane root = FXMLLoader.load(getClass().getResource(screen));
+    		Scene scene = new Scene(root,screenSize.getWidth(),screenSize.getHeight());
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			primaryStage.setTitle("Usecurity");
 			primaryStage.setScene(scene);
 			primaryStage.show();
+			primaryStage.setOnCloseRequest(event -> {
+			    System.out.println("CLOSE WINDOW");
+			    AdminController.teminateThread = true;
+			    CreateCharts.terminateChartThread = true;
+			    AdminController.stopRegistration = true;
+			    AdminController.stopSalesmanThread = true;
+			    UsecController.terminateRegistrationThread = true;
+			    System.exit(0);
+			});
+			closeProcessingWindow();
+			
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -121,7 +196,7 @@ public class LoginController{
     }
     
     private tcpCom.Client createClient(){
-    	return new tcpCom.Client("127.0.0.1", 55555, data ->{
+    	return new tcpCom.Client(serverAdress, 55555, data ->{
     		Platform.runLater(() ->{
     			ChatController.arrived = true;
     			AdminController.currentMessage = data.toString();
@@ -154,6 +229,8 @@ public class LoginController{
 		String auth = (String) mData.get("auktoritet");
 		System.out.println(auth);
     	
+		ProcessingController.progressProp.set(0.25);
+		
     	Stage regStage = (Stage) loginButton.getScene().getWindow();
     	regStage.close();
     	AdminController.user.set(userNameField.getText());
@@ -161,9 +238,11 @@ public class LoginController{
 		userProp.set(userNameField.getText());
 		user = userNameField.getText();
     	if(auth.toString().equals("1") || auth.toString().equals("2")) {
-    		openMainWindow(userNameField.getText(), "UsecurityDasboard.fxml");
+    		UsecController.isActive = true;
+    		openMainWindow(userNameField.getText(), "UsecurityDashboard.fxml");
 		}
     	else if(auth.toString().equals("3")) {
+    		UsecController.isActive = false;
     		openMainWindow(userNameField.getText(), "AdminDashboard.fxml");
     	}
     	try {

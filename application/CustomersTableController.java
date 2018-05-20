@@ -1,28 +1,56 @@
 package application;
 
+import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.poi.util.SystemOutLogger;
 import org.json.simple.JSONObject;
 
 import helper.Customer;
 import helper.Register;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Stage;
 
 public class CustomersTableController {
 
 	public static ObservableList<Customer> allCustomers = FXCollections.observableArrayList();
+	
+	public static ObservableList<Customer> custs = FXCollections.observableArrayList();
+	public static ObservableList<Customer> maks = FXCollections.observableArrayList();
+	public static ObservableList<Customer> faks = FXCollections.observableArrayList();
+	public static ObservableList<Customer> orders = FXCollections.observableArrayList();
+	
+	public static JSONObject custData;
+	public static JSONObject fakData;
+	public static  JSONObject orderData;
+	public static JSONObject makData;
+	
+	public static JSONObject customerData;
+	public static boolean keepRunning = false;
+	public static List<String> openedCustomers = new ArrayList<>();
+	private static Stage customerStage;
 	
     @FXML
     private ResourceBundle resources;
@@ -33,7 +61,16 @@ public class CustomersTableController {
     @FXML
     private TableView<Customer> allCustomersTable;
     
-    private void addCustomer(JSONObject customer) {
+    @FXML
+    private TableView<Customer> orderTable;
+
+    @FXML
+    private TableView<Customer> fakTable;
+
+    @FXML
+    private TableView<Customer> custTable;
+    
+    private void addCustomer(JSONObject customer, ObservableList<Customer> list) {
     	Customer individual = new Customer();
     	Object[] fields = customer.keySet().toArray();
     	for(Object f : fields) {
@@ -41,57 +78,52 @@ public class CustomersTableController {
 			individual.updateText(
 					field, customer.get(field).toString());
 		}
-		allCustomers.add(individual);
+		list.add(individual);
     }
     
+    public static void updateData(JSONObject data) {
+    	customerData = data;
+    	
+    	custData = (JSONObject) customerData.get("kund");
+    	fakData = (JSONObject) customerData.get("fakturerad");
+    	orderData = (JSONObject) customerData.get("order");
+    	makData = (JSONObject) customerData.get("makulerad");
+    }
     
-    private void createAllcustomersTable() {
-    	double totPrice = 0;
-    	int totAmountSold = 0;
-    	Double counter = 0.0;
-    	//Get all customers
-    	JSONObject salesData = Register.get("kunder");
-    	Object[] salesPeople = salesData.keySet().toArray();
-    	for(Object n : salesPeople) {
-    		String name = n.toString();
-    		try {
-	    		JSONObject customers = (JSONObject) salesData.get(name);
-	    		Object[] ids = customers.keySet().toArray();
-	    		for(Object i : ids) {
-	    			String id = i.toString();
-	    			
-	    			JSONObject cust = (JSONObject) customers.get(id);
-	    			totAmountSold += 1;
-	    			try {
-		    			Double customerPrice = Double.parseDouble(cust.get("Kundpris").toString().replace(',', '.'));
-			    		XYChart.Data<Double, Double> input = new XYChart.Data<>(counter, customerPrice);
-			    		Rectangle rect = new Rectangle(0, 0);
-			    		rect.setVisible(false);
-			    		input.setNode(rect);
-			    		
-						String salaryString = cust.get("FSG (SEK)").toString().replace(',', '.');
-			    		if(NumberUtils.isCreatable(salaryString) && cust.get("Status").equals("Kund")) {
-							Double added = Double.parseDouble(salaryString);
-							totPrice += added;
-						}			    		
-	    			}catch(NumberFormatException e) {System.out.println("Format exception: " + cust.get("Kundpris").toString());}
-	    			
-	    			
-	    	    	//Initialize text
-	    	    	//totSoldText.setText(Integer.toString(totalAmountSold));
-		    		
-		    		counter += 1;
-		    		addCustomer(cust);
-	    		}
-	    		//Add sales of salesmen to barchart
-    		}catch(NullPointerException e) {}
+    private void addCustomers(JSONObject data, ObservableList<Customer> list) {
+    	for(Object id : data.keySet()) {
+    		JSONObject customer = (JSONObject) data.get(id);
+    		addCustomer(customer, list);
     	}
+    }
+    
+    private void createAllcustomersTable(boolean salesDashboard) {
+    	//Get all customers    
     	
+		addCustomers(custData, custs);
+		addCustomers(fakData, faks);
+		addCustomers(orderData, orders);
+		addCustomers(makData, maks);	
+    	
+		/*
     	allCustomersTable.setEditable(true);
-    	
-    	TableColumn<Customer, String> IDCol = new TableColumn<>("Personnummer");
-    	IDCol.setCellValueFactory(new PropertyValueFactory<>("personalIDText"));
-    	IDCol.setMinWidth(100);
+    	orderTable.setEditable(true);
+    	custTable.setEditable(true);
+    	//makTable.setEditable(true);
+    	fakTable.setEditable(true);
+    	*/
+    	TableColumn<Customer, String> IDColFak = new TableColumn<>("Personnummer");
+    	IDColFak.setCellValueFactory(new PropertyValueFactory<>("personalIDText"));
+    	IDColFak.setMinWidth(100);
+    	TableColumn<Customer, String> IDColCust = new TableColumn<>("Personnummer");
+    	IDColCust.setCellValueFactory(new PropertyValueFactory<>("personalIDText"));
+    	IDColCust.setMinWidth(100);
+    	TableColumn<Customer, String> IDColMak = new TableColumn<>("Personnummer");
+    	IDColMak.setCellValueFactory(new PropertyValueFactory<>("personalIDText"));
+    	IDColMak.setMinWidth(100);
+    	TableColumn<Customer, String> IDColOrder = new TableColumn<>("Personnummer");
+    	IDColOrder.setCellValueFactory(new PropertyValueFactory<>("personalIDText"));
+    	IDColOrder.setMinWidth(100);
     	
     	TableColumn<Customer, String> nameCol = new TableColumn<>("Namn");
     	nameCol.setCellValueFactory(new PropertyValueFactory<>("nameText"));
@@ -198,18 +230,83 @@ public class CustomersTableController {
     	//totalSalesLineChart.getData().add(totalSalesSeries);
     	statusCol.setMinWidth(75);
     	
-    	allCustomersTable.setItems(allCustomers);
-    	allCustomersTable.getColumns().addAll(IDCol, nameCol, custPriceCol, postalCodeCol, stateCol, 
-    											adressCol, telephoneCol, custNumber, badgeNumberCol, 
-    											mak, statusCol);
+    	
+    	//allCustomersTable.setItems(allCustomers);
+    	
+    	
+    	fakTable.setItems(faks);
+    	fakTable.getColumns().addAll(IDColFak, adressColFak, custNumberFak);
+    	orderTable.setItems(orders);
+    	orderTable.getColumns().addAll(IDCol, adressCol, custNumber);
+    	//makTable.setItems(maks);
+    	custTable.setItems(custs);
+    	custTable.getColumns().addAll(IDCol, adressCol, custNumber);
     }
     
     
-    
+    private void openCustomerWindow(JSONObject customer) {
+    	try {
+    		customerStage = new Stage();
+    		FXMLLoader loader = new FXMLLoader(getClass().getResource("CustomerWindow.fxml"));
+		   	GridPane root = loader.load();
+    		
+    		Scene scene = new Scene(root, 520, 615);
+    		CustomerWindowController con = loader.getController();
+    		con.customer = customer;
+    		con.initWindow(customer);
+    		scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+    		customerStage.setTitle("Kundfönster");
+    		customerStage.setScene(scene);
+    		customerStage.setAlwaysOnTop(true);
+    		customerStage.show();
+    	}catch(IOException e) {
+    		e.printStackTrace();
+    	}
+    }
 
     @FXML
+    void getSelectedCustomer(MouseEvent event) {
+    	//getSelected(makTable);
+    	getSelected(orderTable, orderData);
+    	getSelected(fakTable, fakData);
+    	getSelected(custTable, custData);
+    }
+    
+    private void getSelected(TableView<Customer> table, JSONObject data){
+    	for(Customer cust : table.getSelectionModel().getSelectedItems()) {
+			JSONObject customer = (JSONObject) data.get(cust.customerNumberTextProperty().get());
+			openCustomerWindow(customer);
+		}
+    }
+    
+    @FXML
+    void enterGetSelected(KeyEvent event) {
+    	if(event.getCode().equals(KeyCode.ENTER)) {
+    		//enterSelected(makTable);
+    		enterSelected(orderTable, orderData);
+    		enterSelected(fakTable, fakData);
+    		enterSelected(custTable, custData);
+    	}
+    	if(event.getCode().equals(KeyCode.ESCAPE)) {
+			customerStage.close();
+			System.out.println("close");
+    	}
+    }
+    
+    private void enterSelected(TableView<Customer> table, JSONObject data) {
+    	for(Customer cust : table.getSelectionModel().getSelectedItems()) {
+			JSONObject customer = (JSONObject) data.get(cust.customerNumberTextProperty().get());
+			openCustomerWindow(customer);
+			table.requestFocus();
+		}
+    }
+    
+    @FXML
     void initialize() {
-        assert allCustomersTable != null : "fx:id=\"allCustomersTable\" was not injected: check your FXML file 'AllCustomersTable.fxml'.";
-        createAllcustomersTable();
+        
+    	assert allCustomersTable != null : "fx:id=\"allCustomersTable\" was not injected: check your FXML file 'AllCustomersTable.fxml'.";        
+        
+    	createAllcustomersTable(UsecController.isActive);
+
     }
 }

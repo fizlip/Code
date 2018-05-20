@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import org.json.simple.JSONObject;
+
 import javafx.beans.property.Property;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -94,6 +96,10 @@ public class HomeScreenController implements NewSaleListener{
 		}
 	}
     
+    @Override
+    public void newOrder(JSONObject customer) {}
+    @Override
+	public void statusUpdate() {}
     
     protected void send(String message) {
 		ChatController.arrived = false;
@@ -122,11 +128,13 @@ public class HomeScreenController implements NewSaleListener{
     public void chatAddMessage(String message, String type) {
     	try {
     		double height = messagePane.getPrefHeight();
+    		double width = 1099 * (AdminController.screenSize.getWidth()/1290);
     		AdminController.currentMessage = message;
     		ChatController.type = type;
     		
 	    	FXMLLoader chatLoader = new FXMLLoader(getClass().getResource("ChatPane.fxml"));
 			AnchorPane chat = chatLoader.load();
+			chat.setPrefWidth(width);
 			chat.setLayoutX(0);
 			chat.setLayoutY(-50 + ChatController.offset);
 			ChatController.offset += chat.getPrefHeight();
@@ -135,7 +143,7 @@ public class HomeScreenController implements NewSaleListener{
 			if(chat.getLayoutY() > messagePane.getHeight()) {
 				height += chat.getPrefHeight() + 5;
 				messagePane.setPrefHeight(height);
-				messagePane.setPrefWidth(990);
+				//messagePane.setPrefWidth(width);
 				messageScrollPane.setVvalue(1);
 			}
 			
@@ -144,8 +152,17 @@ public class HomeScreenController implements NewSaleListener{
 		}
     }
     
+    
+    
     @FXML
     void initialize() {
+    	
+    	messageScrollPane.setPrefWidth(1000 * (AdminController.screenSize.getWidth()/1290));
+    	messageScrollPane.setPrefWidth(262 * (AdminController.screenSize.getWidth()/1290));
+    	
+    	messagePane.setPrefWidth(1099 * (AdminController.screenSize.getWidth()/1290));
+    	messagePane.setPrefHeight(463 * (AdminController.screenSize.getHeight()/650));
+    	
     	soldTodayText.textProperty().bind(AdminController.amountSoldToday);
     	serverText.textProperty().bind(AdminController.serverCom);
     	salesChart.getData().add(CreateCharts.salesSeries);

@@ -2,11 +2,16 @@ package application;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import org.json.simple.JSONObject;
+
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
 
 public class AllSalesController {
 
+	public JSONObject data;
+	
     @FXML
     private ResourceBundle resources;
 
@@ -21,8 +26,14 @@ public class AllSalesController {
     	 * Create all the charts on screen
     	 */	    	
     	//Populate linechart
+    	System.out.println("SIZE: " + CreateCharts.salesByDaySeries.getData().size());
     	allSalesLinechart.getData().add(CreateCharts.salesByDaySeries);
     	
+    }
+    
+    public static void updateChart(JSONObject register) {
+    	CreateCharts.resetCharts();
+    	CreateCharts.initSeries(register);
     }
     
     @FXML

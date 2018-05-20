@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.fxml.FXMLLoader;
 import org.json.simple.parser.ParseException;
 
+import helper.Register;
 import javafx.scene.layout.AnchorPane;
 
 
@@ -25,6 +26,9 @@ public class Main extends Application {
 			    System.out.println("CLOSE WINDOW");
 				AdminController.teminateThread = true;
 			    CreateCharts.terminateChartThread = true;
+			    AdminController.stopRegistration = true;
+			    AdminController.stopSalesmanThread = true;
+			    UsecController.terminateRegistrationThread = true;
 			});
 		} catch(Exception e) {
 			e.printStackTrace();

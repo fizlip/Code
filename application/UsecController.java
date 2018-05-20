@@ -1,6 +1,8 @@
 package application;
 
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.io.FileInputStream;
 import helper.*;
 import java.io.FileNotFoundException;
@@ -19,7 +21,6 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.chart.*;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.application.Platform;
@@ -35,6 +36,7 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONObject;
@@ -42,13 +44,13 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 interface UsecInterface {
-	XYChart.Data barChart(String day, Integer amountSold);
+	XYChart.Data barChart(String day, Double amountSold);
 }
 
 public class UsecController {
 	
 	//Statiska instansvariabler
-	private static XYChart.Series<Integer, Integer> personalSales = RegisterController.personalSales;
+	private static XYChart.Series<Integer, Double> personalSales = RegisterController.personalSales;
 	private static XYChart.Series personalSalesAmount = RegisterController.personalSalesAmount;
 	private static ObservableList<String> items = RegisterController.items; 
 	public static int amountSold = 0;
@@ -58,6 +60,8 @@ public class UsecController {
 	public static double x = 0;
 	private double heightAdd = 95;
 	
+	private static Dimension screenSize;
+	
 	public static String[] newColNames = {"Personnummer", "Namn", "Tjänst", "Kundpris", "Telefon", "Adress", "Postnummer" , "Ort",
 			"E-Mail", "Mailfaktura", "Nyhetsmail", "Datum", "Kommentar", "FSG (SEK)", "Betalt", 
 			"Mak", "Status", "Räddat", "Betaldatum", "Kundnummer", "Bricknummer"};
@@ -65,6 +69,7 @@ public class UsecController {
 	//private RegisterController register = new RegisterController(this.user);
 	protected static List<Object> keys = new ArrayList<>();
 	public static XYChart.Series<String, Number> series = new XYChart.Series<>();	//amount sold barchart in the salesmanview
+	public static boolean isActive = false;
 
 	
 	private static boolean log = false;
@@ -87,10 +92,16 @@ public class UsecController {
 	public static boolean keepRunning = true;
 	public static int pageSize = 10;
 	public static Stage passwordStage = new Stage();
+	public static boolean terminateRegistrationThread = false;
+	private static double widthFactor;
+	private static double heightFactor;
 
 	
     @FXML
     private ResourceBundle resources;
+    
+    @FXML
+    private GridPane mainGrid;
     
     @FXML
     private ImageView logo;
@@ -132,7 +143,36 @@ public class UsecController {
     private MenuItem changePasswordMenu;
     
     @FXML
-    void openSetting(MouseEvent event) {
+    void getCustomerTable(ActionEvent event) {
+    	FXMLLoader customerTable = new FXMLLoader(getClass().getResource("AllCustomersTable.fxml"));
+    	salesMainWindow.setVisible(false);
+    	searchPane.setVisible(true);
+    	customerSearchRequest.setVisible(true);
+    	
+    	try {
+			GridPane table = customerTable.load();
+			
+			customerSearchRequest.getChildren().addAll(table);
+			customerSearchRequest.setPrefHeight(customerSearchRequest.getPrefHeight() + table.getPrefHeight());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    }
+    
+    @FXML
+    void buttonEnter(MouseEvent event) {
+    	Button b = (Button) event.getSource();
+    	b.setStyle("-fx-background-color: white; -fx-border-color: dodgerblue; -fx-border-width: 1px;");
+    }
+
+    @FXML
+    void buttonExit(MouseEvent event) {
+    	Button b = (Button) event.getSource();
+    	b.setStyle("-fx-background-color: white; -fx-border-color: gray; -fx-border-width: 1px;"); 
+    }
+    
+    @FXML
+    void openSettings(MouseEvent event) {
     	settings.show();
     }
     
@@ -159,7 +199,8 @@ public class UsecController {
     	
     	Stage stage = new Stage();
      	try {
- 			AnchorPane root = FXMLLoader.load(getClass().getResource("CustomerRegistration.fxml"));
+ 			
+     		AnchorPane root = FXMLLoader.load(getClass().getResource("CustomerRegistration.fxml"));
  			Scene scene = new Scene(root,900,650);
  			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
  			stage.setAlwaysOnTop(true);
@@ -172,7 +213,7 @@ public class UsecController {
      	
     	Thread registrationThread = new Thread() {
 			public void run() {
-				while(true) {
+				while(!terminateRegistrationThread) {
 					if(RegisterController.newCustomer.get()) {
 						send(user.get() + " - " + "NEW: " + ": " + RegisterController.getCustomer());
 						RegisterController.newCustomer.set(false);
@@ -202,7 +243,7 @@ public class UsecController {
 			e.printStackTrace();
 		}
     }
-    
+    /*
     @FXML
     void searchAction(MouseEvent event) {
     	salesMainWindow.setVisible(false);
@@ -220,7 +261,7 @@ public class UsecController {
 			e.printStackTrace();
 		}
     }
-    
+    */
     @FXML
     private MenuItem userStats;
     
@@ -258,10 +299,10 @@ public class UsecController {
     private MenuItem newGoal;
     
     @FXML
-    private LineChart<Integer, Integer> personalSalesChart;
+    private LineChart<Integer, Double> personalSalesChart;
     
     @FXML
-    private BarChart<?, ?> salesAmount;
+    private BarChart<String, Double> salesAmount;
 
     @FXML
     private Text salary;
@@ -283,6 +324,26 @@ public class UsecController {
     
     @FXML
     private ListView leaderBoard;
+    
+    @FXML
+    void searchAction(KeyEvent event) {
+    	if(event.getCode().equals(KeyCode.ENTER)) {
+    		salesMainWindow.setVisible(false);
+        	searchPane.setVisible(true);
+        	customerSearchRequest.setVisible(true);
+        	customerSearchRequest.getChildren().clear();
+        	customerSearchRequest.setPrefHeight(0);
+    		System.out.println("STARTING SEARCH");
+    		String search = searchFieldAction.getText();
+    		try {
+    			System.out.println(user.get() + " - " + "GET: " + search);
+    			send(user.get() + " - GET: " + search + ": sök");
+    		} catch (Exception e) {
+    			System.out.println("Could not send message");
+    			e.printStackTrace();
+    		}
+    	}
+    }
     
     @FXML
     void showStats(ActionEvent event) {
@@ -332,8 +393,8 @@ public class UsecController {
     	}
     }
     
-    public static void incAmountSold() {
-    	amountSold++;
+    public static void incAmountSold(Double fsg) {
+    	amountSold += fsg;
     }
     
     public static void incX() {
@@ -341,15 +402,31 @@ public class UsecController {
     }
     
     
-    public void createBarChart() {
+    public void createBarChart(JSONObject userData) {
     	
-    	personalSalesAmount.getData().add(new XYChart.Data<String, Integer>("Måndag", 36));
-        personalSalesAmount.getData().add(new XYChart.Data<String, Integer>("Tisdag", 24));
-        personalSalesAmount.getData().add(new XYChart.Data<String, Integer>("Onsdag", 42));
-        personalSalesAmount.getData().add(new XYChart.Data<String, Integer>("Torsdag", 25));
+    	
+    	JSONObject customers = (JSONObject) userData.get("kunder");
+    	for(Object id : customers.keySet()) {
+    		JSONObject customer = (JSONObject) customers.get(id);
+    		String month;
+    		try {
+    			month = customer.get("Datum").toString().split("-")[1];
+    		}catch(ArrayIndexOutOfBoundsException e) {
+    			continue;
+    		}
+    		System.out.println(month);
+    		if(month.equals("05")){
+    			try {
+    				Double customerFsg = Double.parseDouble(customer.get("FSG (SEK)").toString().replace(',', '.'));
+    				String date = (String) customer.get("Datum");
+        			personalSalesAmount.getData().add(new XYChart.Data<String, Double>(date, customerFsg));
+    			}catch(NumberFormatException e) {}
+    		}
+    	}
         
-    	XYChart.Data<String, Integer> value = new XYChart.Data<>("Fredag", amountSold);
+    	XYChart.Data<String, Integer> value = new XYChart.Data<>(DateHandler.getCurrentFormattedTime(), amountSold);
     	personalSalesAmount.getData().add(value);
+    	salesAmount.setAnimated(false);
     	salesAmount.getData().add(personalSalesAmount);
     }
     
@@ -361,7 +438,7 @@ public class UsecController {
         XYChart.Series<Integer, Integer> recordSeries = new XYChart.Series<>();
     	recordSeries.getData().add(personalBest);
     	
-    	personalSalesChart.getData().add(recordSeries);
+    	//personalSalesChart.getData().add(recordSeries);
     	personalSalesChart.getData().add(personalSales);
     }
     
@@ -370,16 +447,29 @@ public class UsecController {
     }
     
     private tcpCom.Client createClient(){
-    	return new tcpCom.Client("127.0.0.1", 55555, data ->{
+    	return new tcpCom.Client(LoginController.serverAdress, 55555, data ->{
     		Platform.runLater(() ->{
     			String[] formattedMessage = data.toString().split(" START");
-    			System.out.println(Arrays.toString(formattedMessage));
+    			//System.out.println(Arrays.toString(formattedMessage));
+    			String[] messageDef = formattedMessage[0].split(";");
     			if(ChatController.type.equals("m")) {
     				//AdminController.listener.addMessage();
     			}
     			else if(formattedMessage[0].equals("SEND")) {
     				post(formattedMessage[1]);
     			}
+    			
+    			else if(messageDef[0].equals("MENU")) {
+    				if(messageDef[1].toLowerCase().equals("användare")) {
+    					//init user
+    					System.out.println("ANVÄNDARE");
+    					JSONObject userData = parseSearch(formattedMessage[1]);
+    					JSONObject customersToAdd = (JSONObject) userData.get("kunder");
+    					CustomersTableController.customerData = customersToAdd;
+    					createBarChart(userData);
+    				}
+    			}
+    			
     			else if(formattedMessage[0].equals("DATA")) {
     				if(formattedMessage[1].equals("AUTHENTICATED")) {
     					passwordStage.close();
@@ -487,7 +577,8 @@ public class UsecController {
 		    String kundnummer = (String) customerInfo.get("Kundnummer");
 		    String tjänst = (String) customerInfo.get("Tjänst");
 		    //Register.get(kundnummer);
-		    con.printResult(namn, kundnummer, tjänst, Register.currentSalesman, currentPage);
+		    con.customer = customerInfo;
+		    con.printResult(customerInfo, currentPage);
 		    //Rita customerPane på korrekt plats på skärmen
 		    root.setLayoutY(y); root.toBack();
 		    y += heightAdd + 5;
@@ -536,7 +627,14 @@ public class UsecController {
     private void getSalesManPane(XYChart.Series<String, Number> salesman) {    	
     	try {
     		FXMLLoader loader = new FXMLLoader(getClass().getResource("SalesManPane.fxml"));
-    		AnchorPane salesmanPane = loader.load();
+    		GridPane salesmanPane = loader.load();
+    		
+    		salesmanPane.setPrefHeight(650 * heightFactor);
+    		salesmanPane.setPrefWidth(1200 * widthFactor);
+    		
+    		SalesManPaneController controller = loader.getController();
+    		controller.nameText.setText(LoginController.userProp.get());
+    		
     		FXMLLoader daysLoader = new FXMLLoader(getClass().getResource("Days.fxml"));
     		AnchorPane days = daysLoader.load();
     		days.setLayoutY(salesmanPane.getPrefHeight() + 50);
@@ -577,9 +675,25 @@ public class UsecController {
     }
     
     @FXML
-    void initialize() {        
-        // Binding text properties
+    void initialize() {    
+    	SalesManPaneController.userRequest = true;
     	connectClient();
+    	screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    	mainGrid.setPrefHeight(screenSize.getHeight());
+    	mainGrid.setPrefWidth(screenSize.getWidth());
+    	customerSearchRequest.setPrefHeight(searchPane.getHeight());
+    	customerSearchRequest.setPrefWidth(searchPane.getWidth());
+    	
+    	heightFactor = ((Double) screenSize.getHeight())/650.0;
+    	widthFactor = ((Double) screenSize.getWidth()/1275.0);
+    	
+    	DailyGoalBar.setPrefWidth(600 * widthFactor);
+    	MonthlyGoalBar.setPrefWidth(600 * widthFactor);
+    	
+    	logBook.setPrefHeight(220 * heightFactor);
+    	logBook.setPrefWidth(636 * widthFactor);
+    	
+        // Binding text properties
     	dailyGoal.textProperty().bind(DailyProgressText.goalProperty());
         monthlyGoal.textProperty().bind(MonthlyProgressText.goalProperty());
         salary.textProperty().bind(SalaryText.property());
@@ -589,7 +703,7 @@ public class UsecController {
         
         ObservableList<String> leader = FXCollections.observableArrayList(); 
         leader.addAll("1: Bästa säljaren, XXX st.", "2: Näst Bästa säljaren, YYY st.", "3: Tredje bästa säljaren ZZZ st." ,"osv.");
-        leaderBoard.setItems(leader);
+        //leaderBoard.setItems(leader);
         
         
         MonthlyGoalBar.setProgress(progress);
@@ -599,11 +713,16 @@ public class UsecController {
         
         CustomerPaneController.connection = connection;
 
-        createBarChart();
-    	createLineChart();
+        
     	salesAmount.lookupAll(".default-color0.chart-bar")
     	.forEach(n -> n.setStyle("-fx-bar-fill: #3b9ff7;"));
+    	try {
+			TimeUnit.SECONDS.sleep(5);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
     	send(user.get() + " - GET: WEEK" + ": data");
-    	
+    	send(user.get() + " - GET: order: init");
+    	createLineChart();
     }
 }

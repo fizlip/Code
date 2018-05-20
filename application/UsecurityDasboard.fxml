@@ -14,7 +14,6 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
@@ -30,211 +29,226 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="1290.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.UsecController">
+<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="1275.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1">
+  <columnConstraints>
+    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+  </columnConstraints>
+  <rowConstraints>
+    <RowConstraints maxHeight="115.0" minHeight="10.0" prefHeight="114.00001780192054" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="542.6666539510092" minHeight="10.0" prefHeight="535.9999821980795" vgrow="SOMETIMES" />
+  </rowConstraints>
    <children>
-      <SplitPane dividerPositions="0.17592592592592593" layoutX="195.0" layoutY="64.0" orientation="VERTICAL" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-        <items>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+      <GridPane fx:id="salesMainWindow" hgap="5.0" prefHeight="473.0" prefWidth="1288.0" vgap="5.0" GridPane.rowIndex="1">
+         <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="868.6667073567709" minWidth="10.0" prefWidth="641.3333129882812" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="631.3333536783854" minWidth="10.0" prefWidth="621.3333536783854" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints maxHeight="232.33334350585938" minHeight="10.0" prefHeight="227.33332316080728" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="289.3333435058594" minHeight="10.0" prefHeight="221.33334350585938" vgrow="SOMETIMES" />
+         </rowConstraints>
+         <children>
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="280.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.25" width="1274.0" GridPane.rowIndex="1" />
+            <ScrollPane hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" vbarPolicy="NEVER">
+               <content>
+                  <TabPane prefHeight="229.0" prefWidth="637.0" style="-fx-background-color: white;" tabClosingPolicy="UNAVAILABLE">
+                     <tabs>
+                        <Tab text="Händelselogg">
+                           <content>
+                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="134.0" prefWidth="626.0">
+                                 <children>
+                                    <Text fx:id="logBookTitle" fontSmoothingType="LCD" layoutX="38.0" layoutY="32.0" onMousePressed="#titleClicked" strokeType="OUTSIDE" strokeWidth="0.0" text="Händelselogg">
+                                       <font>
+                                          <Font name="Arial" size="18.0" />
+                                       </font>
+                                    </Text>
+                                    <ListView fx:id="logBook" layoutX="6.0" layoutY="45.0" prefHeight="145.0" prefWidth="622.0" />
+                                 </children>
+                              </AnchorPane>
+                           </content>
+                        </Tab>
+                        <Tab text="Ledarlista">
+                           <content>
+                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                 <children>
+                                    <Text fx:id="leaderBoardText" layoutX="14.0" layoutY="21.0" onMousePressed="#titleClicked" strokeType="OUTSIDE" strokeWidth="0.0" text="Top 10">
+                                       <font>
+                                          <Font size="18.0" />
+                                       </font>
+                                    </Text>
+                                    <ListView fx:id="leaderBoard" layoutX="12.0" layoutY="33.0" prefHeight="158.0" prefWidth="614.0" visible="false" />
+                                 </children>
+                              </AnchorPane>
+                           </content>
+                        </Tab>
+                        <Tab text="Chatt">
+                           <content>
+                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                           </content>
+                        </Tab>
+                     </tabs>
+                  </TabPane>
+               </content>
+            </ScrollPane>
+            <LineChart fx:id="personalSalesChart" style="-fx-background-color: white;" title="Försäljning" GridPane.rowIndex="1">
+               <xAxis>
+                  <NumberAxis side="BOTTOM" />
+               </xAxis>
+               <yAxis>
+                  <NumberAxis side="LEFT" />
+               </yAxis>
+            </LineChart>
+            <GridPane maxWidth="-Infinity" minWidth="-Infinity" prefHeight="233.0" prefWidth="628.0" style="-fx-background-color: white;" translateX="-20.0" GridPane.columnIndex="1">
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+               </rowConstraints>
                <children>
-                  <MenuButton fx:id="settings" layoutX="1157.0" layoutY="70.0" mnemonicParsing="false" onAction="#openSetting" text="Användare" visible="false">
-                    <items>
-                      <MenuItem fx:id="userStats" mnemonicParsing="false" onAction="#showStats" text="Statistik" />
-                        <MenuItem mnemonicParsing="false" text="Kunder" />
-                      <MenuItem fx:id="changePasswordMenu" mnemonicParsing="false" onAction="#showPasswordDialog" onMenuValidation="#showPasswordDialog" text="Ändra lösenord" />
-                    </items>
-                  </MenuButton>
-                  <HBox layoutX="154.0" layoutY="11.0" prefHeight="39.0" prefWidth="1041.0">
-                     <children>
-                        <Button fx:id="newCustomer" blendMode="SRC_ATOP" mnemonicParsing="false" onAction="#newCustomerAction" prefHeight="38.0" prefWidth="62.0" text="Ny Kund">
-                           <effect>
-                              <ColorAdjust />
-                           </effect>
-                        </Button>
-                        <TextField fx:id="searchFieldAction" prefHeight="39.0" prefWidth="919.0" promptText="Namn">
-                           <font>
-                              <Font size="18.0" />
-                           </font>
-                        </TextField>
-                        <Button fx:id="searchButton" mnemonicParsing="false" onMousePressed="#searchAction" prefHeight="38.0" prefWidth="59.0" text="Sök" />
-                     </children>
-                  </HBox>
-                  <Group layoutX="905.0" layoutY="98.0">
-                     <children>
-                        <Text layoutX="-13.0" layoutY="-2.0" opacity="0.7" strokeType="OUTSIDE" strokeWidth="0.0" text="Personbästa:" translateX="120.0" translateY="-25.0">
-                           <font>
-                              <Font size="18.0" />
-                           </font>
-                        </Text>
-                        <Text fx:id="PersonalBest" fill="#1e1e1e" layoutX="75.0" layoutY="0.6666679382324219" opacity="0.9" strokeType="OUTSIDE" strokeWidth="0.0" text="0 SEK" translateX="30.0" translateY="10.0">
-                           <font>
-                              <Font name="Arial Bold" size="36.0" />
-                           </font>
-                        </Text>
-                     </children>
-                  </Group>
-                  <Text fx:id="salary" fill="#1e1e1e" layoutX="154.0" layoutY="108.0" onMousePressed="#handleSalaryAction" opacity="0.9" strokeType="OUTSIDE" strokeWidth="0.0" text=" 0 SEK/s" translateY="-10.0">
+                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="234.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.25" translateY="60.0" width="633.0" />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Dagsmål" translateX="10.0" translateY="-30.0">
                      <font>
-                        <Font name="System Bold" size="36.0" />
+                        <Font size="14.0" />
                      </font>
                   </Text>
-                  <Group layoutX="518.0" layoutY="98.0">
-                     <children>
-                        <Text layoutX="-8.0" layoutY="-3.0" opacity="0.7" strokeType="OUTSIDE" strokeWidth="0.0" text="Antal Sälj:" translateX="95.0" translateY="-25.0">
-                           <font>
-                              <Font size="18.0" />
-                           </font>
-                        </Text>
-                        <Text fx:id="AmountSold" fill="#1e1e1e" layoutX="58.0" opacity="0.9" strokeType="OUTSIDE" strokeWidth="0.0" text="0" translateX="30.0" translateY="10.0">
-                           <font>
-                              <Font name="Arial Bold" size="36.0" />
-                           </font>
-                        </Text>
-                     </children>
-                  </Group>
-                  <ImageView fx:id="logoPic" fitHeight="136.0" fitWidth="135.0" layoutX="22.0" layoutY="-8.0" onMousePressed="#backToMain" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@ISGG-logga.png" />
-                     </image>
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor>
-                  </ImageView>
-                  <ImageView fx:id="userImage" fitHeight="48.0" fitWidth="62.0" layoutX="1212.0" layoutY="60.0" onMousePressed="#openSetting" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../../../../Downloads/User-2-128.png" />
-                     </image>
-                  </ImageView>
-               </children></AnchorPane>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0" style="-fx-background-color: white;">
-               <children>
-                  <GridPane fx:id="salesMainWindow" hgap="5.0" prefHeight="473.0" prefWidth="1288.0" vgap="5.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                    <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="868.6667073567709" minWidth="10.0" prefWidth="641.3333129882812" />
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="631.3333536783854" minWidth="10.0" prefWidth="621.3333536783854" />
-                    </columnConstraints>
-                    <rowConstraints>
-                      <RowConstraints maxHeight="232.33334350585938" minHeight="10.0" prefHeight="227.33332316080728" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="289.3333435058594" minHeight="10.0" prefHeight="221.33334350585938" vgrow="SOMETIMES" />
-                    </rowConstraints>
-                     <children>
-                        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="280.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.25" width="1274.0" GridPane.rowIndex="1" />
-                        <ScrollPane hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" vbarPolicy="NEVER">
-                           <content>
-                              <TabPane prefHeight="229.0" prefWidth="637.0" style="-fx-background-color: white;" tabClosingPolicy="UNAVAILABLE">
-                                <tabs>
-                                  <Tab text="Händelselogg">
-                                    <content>
-                                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="134.0" prefWidth="626.0">
-                                             <children>
-                                                <Text fx:id="logBookTitle" fontSmoothingType="LCD" layoutX="38.0" layoutY="32.0" onMousePressed="#titleClicked" strokeType="OUTSIDE" strokeWidth="0.0" text="Händelselogg">
-                                                   <font>
-                                                      <Font name="Arial" size="18.0" />
-                                                   </font>
-                                                </Text>
-                                                <ListView fx:id="logBook" layoutX="6.0" layoutY="45.0" prefHeight="145.0" prefWidth="622.0" />
-                                             </children>
-                                          </AnchorPane>
-                                    </content>
-                                  </Tab>
-                                  <Tab text="Ledarlista">
-                                    <content>
-                                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                                             <children>
-                                                <Text fx:id="leaderBoardText" layoutX="14.0" layoutY="21.0" onMousePressed="#titleClicked" strokeType="OUTSIDE" strokeWidth="0.0" text="Top 10">
-                                                   <font>
-                                                      <Font size="18.0" />
-                                                   </font>
-                                                </Text>
-                                                <ListView fx:id="leaderBoard" layoutX="12.0" layoutY="33.0" prefHeight="158.0" prefWidth="614.0" visible="false" />
-                                             </children>
-                                          </AnchorPane>
-                                    </content>
-                                  </Tab>
-                                    <Tab text="Chatt">
-                                      <content>
-                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-                                      </content>
-                                    </Tab>
-                                </tabs>
-                              </TabPane>
-                           </content>
-                        </ScrollPane>
-                        <LineChart fx:id="personalSalesChart" style="-fx-background-color: white;" title="Försäljning" GridPane.rowIndex="1">
-                          <xAxis>
-                            <NumberAxis side="BOTTOM" />
-                          </xAxis>
-                          <yAxis>
-                            <NumberAxis side="LEFT" />
-                          </yAxis>
-                        </LineChart>
-                        <GridPane maxWidth="-Infinity" minWidth="-Infinity" prefHeight="233.0" prefWidth="628.0" style="-fx-background-color: white;" translateX="-20.0" GridPane.columnIndex="1">
-                           <columnConstraints>
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                           </columnConstraints>
-                           <rowConstraints>
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                           </rowConstraints>
-                           <children>
-                              <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="234.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.25" translateY="60.0" width="633.0" />
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Dagsmål" translateX="10.0" translateY="-30.0">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Text>
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Månadsmål" translateX="10.0" translateY="-30.0" GridPane.rowIndex="1">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Text>
-                              <Text fx:id="dailyGoal" strokeType="OUTSIDE" strokeWidth="0.0" text="5000 SEK" textAlignment="RIGHT" translateX="400.0" translateY="-30.0">
-                                 <font>
-                                    <Font size="24.0" />
-                                 </font>
-                              </Text>
-                              <Text fx:id="monthlyGoal" layoutX="10.0" layoutY="63.0" strokeType="OUTSIDE" strokeWidth="0.0" text="300 000 SEK" textAlignment="RIGHT" translateX="400.0" translateY="-30.0" GridPane.rowIndex="1">
-                                 <font>
-                                    <Font size="24.0" />
-                                 </font>
-                              </Text>
-                              <Text opacity="0.9" strokeType="OUTSIDE" strokeWidth="0.0" text="10 dagar" translateX="550.0" GridPane.rowIndex="1" />
-                              <ProgressBar fx:id="DailyGoalBar" prefHeight="31.0" prefWidth="530.0" progress="0.0" translateX="10.0">
-                                 <contextMenu>
-                                    <ContextMenu>
-                                      <items>
-                                        <MenuItem fx:id="newGoal" mnemonicParsing="false" onAction="#newGoalAction" text="Ändra dagsmål" />
-                                      </items>
-                                    </ContextMenu>
-                                 </contextMenu>
-                              </ProgressBar>
-                              <ProgressBar fx:id="MonthlyGoalBar" layoutX="10.0" layoutY="57.0" prefHeight="31.0" prefWidth="530.0" progress="0.0" translateX="10.0" GridPane.rowIndex="1" />
-                              <TextField fx:id="newGoalTextField" maxWidth="-Infinity" onKeyPressed="#newGoalWrittenAction" prefHeight="33.0" prefWidth="529.0" promptText="Nytt mål" visible="false" />
-                           </children>
-                           <GridPane.margin>
-                              <Insets left="20.0" />
-                           </GridPane.margin>
-                        </GridPane>
-                        <BarChart fx:id="salesAmount" prefHeight="183.0" prefWidth="391.0" style="-fx-background-color: white;" title="Antal Sälj" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                          <xAxis>
-                            <CategoryAxis animated="true" side="BOTTOM" />
-                          </xAxis>
-                          <yAxis>
-                            <NumberAxis side="LEFT" />
-                          </yAxis>
-                        </BarChart>
-                     </children>
-                     <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                     </padding>
-                  </GridPane>
-                  <ScrollPane fx:id="searchPane" layoutX="132.0" prefHeight="531.3333333333334" prefWidth="1288.0" style="-fx-background-color: white;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                    <content>
-                      <AnchorPane fx:id="customerSearchRequest" minHeight="0.0" minWidth="0.0" prefHeight="0.0" prefWidth="1283.0" style="-fx-background-color: white;" />
-                    </content>
-                  </ScrollPane>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Månadsmål" translateX="10.0" translateY="-30.0" GridPane.rowIndex="1">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Text>
+                  <Text fx:id="dailyGoal" strokeType="OUTSIDE" strokeWidth="0.0" text="5000 SEK" textAlignment="RIGHT" translateX="400.0" translateY="-30.0">
+                     <font>
+                        <Font size="24.0" />
+                     </font>
+                  </Text>
+                  <Text fx:id="monthlyGoal" layoutX="10.0" layoutY="63.0" strokeType="OUTSIDE" strokeWidth="0.0" text="300 000 SEK" textAlignment="RIGHT" translateX="400.0" translateY="-30.0" GridPane.rowIndex="1">
+                     <font>
+                        <Font size="24.0" />
+                     </font>
+                  </Text>
+                  <Text opacity="0.9" strokeType="OUTSIDE" strokeWidth="0.0" text="10 dagar" translateX="550.0" GridPane.rowIndex="1" />
+                  <ProgressBar fx:id="DailyGoalBar" prefHeight="31.0" prefWidth="530.0" progress="0.0" style="-fx-border-color: white;" translateX="10.0">
+                     <contextMenu>
+                        <ContextMenu>
+                           <items>
+                              <MenuItem fx:id="newGoal" mnemonicParsing="false" onAction="#newGoalAction" text="Ändra dagsmål" />
+                           </items>
+                        </ContextMenu>
+                     </contextMenu>
+                  </ProgressBar>
+                  <ProgressBar fx:id="MonthlyGoalBar" layoutX="10.0" layoutY="57.0" prefHeight="31.0" prefWidth="530.0" progress="0.0" translateX="10.0" GridPane.rowIndex="1" />
+                  <TextField fx:id="newGoalTextField" maxWidth="-Infinity" onKeyPressed="#newGoalWrittenAction" prefHeight="33.0" prefWidth="529.0" promptText="Nytt mål" visible="false" />
                </children>
-            </AnchorPane>
-        </items>
-      </SplitPane>
+               <GridPane.margin>
+                  <Insets left="20.0" />
+               </GridPane.margin>
+            </GridPane>
+            <BarChart fx:id="salesAmount" prefHeight="183.0" prefWidth="391.0" style="-fx-background-color: white;" title="Antal Sälj" GridPane.columnIndex="1" GridPane.rowIndex="1">
+               <xAxis>
+                  <CategoryAxis animated="true" side="BOTTOM" />
+               </xAxis>
+               <yAxis>
+                  <NumberAxis side="LEFT" />
+               </yAxis>
+            </BarChart>
+         </children>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+      </GridPane>
+      <ScrollPane fx:id="searchPane" prefHeight="531.3333333333334" prefWidth="1288.0" style="-fx-background-color: white;" visible="false" GridPane.rowIndex="1">
+         <content>
+            <AnchorPane fx:id="customerSearchRequest" minHeight="0.0" minWidth="0.0" prefHeight="0.0" prefWidth="1283.0" style="-fx-background-color: white;" />
+         </content>
+      </ScrollPane>
+      <MenuButton fx:id="settings" mnemonicParsing="false" onAction="#openSetting" text="Användare" visible="false">
+         <items>
+            <MenuItem fx:id="userStats" mnemonicParsing="false" onAction="#showStats" text="Statistik" />
+            <MenuItem fx:id="salesCustomers" mnemonicParsing="false" onAction="#getCustomerTable" text="Kunder" />
+            <MenuItem fx:id="changePasswordMenu" mnemonicParsing="false" onAction="#showPasswordDialog" onMenuValidation="#showPasswordDialog" text="Ändra lösenord" />
+         </items>
+      </MenuButton>
+      <HBox maxHeight="-Infinity" prefHeight="99.0" prefWidth="1275.0">
+         <children>
+            <Button fx:id="newCustomer" blendMode="SRC_ATOP" mnemonicParsing="false" onAction="#newCustomerAction" onMouseEntered="#buttonEnter" onMouseExited="#buttonExit" prefHeight="45.0" prefWidth="62.0" style="-fx-background-color: white; -fx-border-color: gray;" text="Ny Kund">
+               <effect>
+                  <ColorAdjust />
+               </effect>
+            </Button>
+            <TextField fx:id="searchFieldAction" prefHeight="39.0" prefWidth="911.0" promptText="Namn" style="-fx-background-color: white; -fx-border-color: blagrayck;">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </TextField>
+            <Button fx:id="searchButton" mnemonicParsing="false" onMouseEntered="#buttonEnter" onMouseExited="#buttonExit" onMousePressed="#searchAction" prefHeight="45.0" prefWidth="59.0" style="-fx-background-color: white; -fx-border-color: gray;" text="Sök" />
+         </children>
+      </HBox>
+      <Group>
+         <children>
+            <Text layoutX="-13.0" layoutY="-2.0" opacity="0.7" strokeType="OUTSIDE" strokeWidth="0.0" text="Personbästa:" translateX="120.0" translateY="-25.0">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Text>
+            <Text fx:id="PersonalBest" fill="#1e1e1e" layoutX="75.0" layoutY="0.6666679382324219" opacity="0.9" strokeType="OUTSIDE" strokeWidth="0.0" text="0 SEK" translateX="30.0" translateY="10.0">
+               <font>
+                  <Font name="Arial Bold" size="36.0" />
+               </font>
+            </Text>
+         </children>
+      </Group>
+      <Text fx:id="salary" fill="#1e1e1e" onMousePressed="#handleSalaryAction" opacity="0.9" strokeType="OUTSIDE" strokeWidth="0.0" text=" 0 SEK/s">
+         <font>
+            <Font name="System Bold" size="36.0" />
+         </font>
+      </Text>
+      <Group>
+         <children>
+            <Text layoutX="-8.0" layoutY="-3.0" opacity="0.7" strokeType="OUTSIDE" strokeWidth="0.0" text="Antal Sälj:" translateX="95.0" translateY="-25.0">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Text>
+            <Text fx:id="AmountSold" fill="#1e1e1e" layoutX="58.0" opacity="0.9" strokeType="OUTSIDE" strokeWidth="0.0" text="0" translateX="30.0" translateY="10.0">
+               <font>
+                  <Font name="Arial Bold" size="36.0" />
+               </font>
+            </Text>
+         </children>
+      </Group>
+      <Text opacity="0.7" strokeType="OUTSIDE" strokeWidth="0.0" text="Antal Sälj:">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Text>
+      <Text fx:id="AmountSold" fill="#1e1e1e" opacity="0.9" strokeType="OUTSIDE" strokeWidth="0.0" text="0">
+         <font>
+            <Font name="Arial Bold" size="36.0" />
+         </font>
+      </Text>
+      <ImageView fx:id="logoPic" fitHeight="136.0" fitWidth="135.0" onMousePressed="#backToMain" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@ISGG-logga.png" />
+         </image>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </ImageView>
+      <ImageView fx:id="userImage" fitHeight="48.0" fitWidth="62.0" onMousePressed="#openSetting" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../../Downloads/User-2-128.png" />
+         </image>
+      </ImageView>
+      <GridPane>
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="630.6666870117188" minWidth="10.0" prefWidth="131.3333282470703" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="1144.6666717529297" minWidth="10.0" prefWidth="1144.6666717529297" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+      </GridPane>
    </children>
-</AnchorPane>
+</GridPane>

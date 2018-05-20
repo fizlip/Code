@@ -23,10 +23,10 @@ import javafx.scene.shape.Rectangle;
 public class CreateCharts {
 	
 	//SalesTab series
-	public static XYChart.Series<String, Integer> totalMakCat = new XYChart.Series<>();
-	public static XYChart.Series<String, Integer> totalCustomersCat = new XYChart.Series<>();
-	public static XYChart.Series<String, Integer> totalBilledCat = new XYChart.Series<>();
-	public static XYChart.Series<String, Integer> totalOrderCat = new XYChart.Series<>();
+	public static XYChart.Series<String, Double> totalMakCat = new XYChart.Series<>();
+	public static XYChart.Series<String, Double> totalCustomersCat = new XYChart.Series<>();
+	public static XYChart.Series<String, Double> totalBilledCat = new XYChart.Series<>();
+	public static XYChart.Series<String, Double> totalOrderCat = new XYChart.Series<>();
 	
 	//Salesman page
 	//Status series
@@ -83,12 +83,37 @@ public class CreateCharts {
 		amountSold = amountSold.intValue() + 1;
 	}
 	
-	public static void initSeries() {
+	public static void resetCharts() {
+		//SalesTab series
+		totalMakCat = new XYChart.Series<>();
+		totalCustomersCat = new XYChart.Series<>();
+		totalBilledCat = new XYChart.Series<>();
+		totalOrderCat = new XYChart.Series<>();
+		
+		//Salesman page
+		//Status series
+		makBySalesman = new XYChart.Series<>();
+		customersBySalesman = new XYChart.Series<>();
+		billedBySalesman = new XYChart.Series<>();
+		orderBySalesman = new XYChart.Series<>();
+		//status mappings
+		salesmanMapping = new HashMap<>();
+		//Sales series
+		salesByDaySeries = new XYChart.Series<>();
+		//Sales mappings
+		salesByDayMapping = new HashMap<>();
+		
+		//FSG sales
+		fsgSeriesByName = new XYChart.Series<>();
+		fsgByName = 0.0;
+	}
+	
+	public static void initSeries(JSONObject salesDep) {
 		// Get customer JSON
-		JSONObject salesDep = (JSONObject) Register.get("kunder");
+		errors = 0;
+		ProcessingController.loadProp.set("Skapar grafer...");
     	Object[] salesPersons = salesDep.keySet().toArray();
-    	Map<String, Integer> amountMapping = new HashMap<>();
-    	
+    	Map<String, Double> amountMapping = new HashMap<>();
     	//Traverse customer data
     	for(Object s : salesPersons) {
     		//Initialize amount status to 0 for every salesman
@@ -106,6 +131,7 @@ public class CreateCharts {
 	    	fsgByName = 0.0;
 		}
     	
+    	
     	List<Long> sortedDates = DateHandler.getFormattedDate(salesByDayMapping);
     	sortedDates = DateHandler.sortDate(sortedDates);
     	salesByDaySeries = DateHandler.getDateSeries(salesByDaySeries, salesByDayMapping, sortedDates);
@@ -117,7 +143,7 @@ public class CreateCharts {
 	/*
 	 * Add data to the all series
 	 */
-	private static void addData(String salesPerson, Map<String, Integer> amountMapping) {
+	private static void addData(String salesPerson, Map<String, Double> amountMapping) {
 		//All sales series
 		totalMakCat.getData().add(new XYChart.Data<>(salesPerson, amountMapping.get("Makulerad")));
 		totalCustomersCat.getData().add(new XYChart.Data<>(salesPerson, amountMapping.get("Kund")));
@@ -137,13 +163,14 @@ public class CreateCharts {
 	/*
 	 * Create series for totaSales for charts on the main salesman tab
 	 */
-	private static void traverseIds(Map<String, Integer> amountMapping, JSONObject salesDep, String salesPerson, int errors){
+	private static void traverseIds(Map<String, Double> amountMapping, JSONObject salesDep, String salesPerson, int errors){
 
 		//Initialize amount status to 0 for every salesman
-		amountMapping.put("Makulerad", 0);amountMapping.put("Kund", 0);
-		amountMapping.put("Fakturerad", 0);amountMapping.put("Order", 0);
+		amountMapping.put("Makulerad", 0.0);amountMapping.put("Kund", 0.0);
+		amountMapping.put("Fakturerad", 0.0);amountMapping.put("Order", 0.0);
 		
 		JSONObject salesData = (JSONObject) salesDep.get(salesPerson);
+		salesData = (JSONObject) salesData.get("kunder");
 		try {
 			Object[] ids = salesData.keySet().toArray();
 			//Traverse ids
@@ -221,13 +248,14 @@ public class CreateCharts {
 	/*
 	 * Add data to allSales barchart on the main sales tab
 	 */
-	private static void allSalesSeries(JSONObject customer, Map<String, Integer> amountMapping) {
+	private static void allSalesSeries(JSONObject customer, Map<String, Double> amountMapping) {
 		//Update status values for series, if there is no status print an error message
 		try {
-			Integer amount = (Integer) amountMapping.get(customer.get("Status").toString());
-			amountMapping.put(customer.get("Status").toString(),amount+=1);
+			Double amount = (Double) amountMapping.get(customer.get("Status").toString());
+			Double price = Double.parseDouble(customer.get("FSG (SEK)").toString().replace(',', '.'));
+			amountMapping.put(customer.get("Status").toString(),amount+=price);
 		}
-		catch(NullPointerException e) {
+		catch(Exception e) {
 			errors+=1;
 		}
 	}

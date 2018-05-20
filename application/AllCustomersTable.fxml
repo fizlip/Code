@@ -1,19 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Text?>
 
-<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="560.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.CustomersTableController">
+<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="560.0" prefWidth="1389.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.CustomersTableController">
   <columnConstraints>
-    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+      <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="100.0" />
+      <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="100.0" />
+      <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="100.0" />
+    <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="100.0" />
   </columnConstraints>
   <rowConstraints>
-    <RowConstraints maxHeight="192.66665649414062" minHeight="5.333323001861572" prefHeight="41.9999885559082" vgrow="SOMETIMES" />
-    <RowConstraints maxHeight="517.333344777425" minHeight="10.0" prefHeight="517.333344777425" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="50.0" minHeight="5.333323001861572" prefHeight="41.9999885559082" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="517.333344777425" valignment="BOTTOM" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
-      <TableView fx:id="allCustomersTable" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="469.0" prefWidth="1150.0" translateX="25.0" GridPane.rowIndex="1" />
+      <TableView fx:id="allCustomersTable" onKeyPressed="#enterGetSelected" onMousePressed="#getSelectedCustomer" prefHeight="469.0" prefWidth="1150.0" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" />
+      <TableView fx:id="orderTable" onKeyPressed="#enterGetSelected" onMousePressed="#getSelectedCustomer" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;" GridPane.rowIndex="1" />
+      <TableView fx:id="fakTable" onKeyPressed="#enterGetSelected" onMousePressed="#getSelectedCustomer" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+      <TableView fx:id="custTable" onKeyPressed="#enterGetSelected" onMousePressed="#getSelectedCustomer" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Order" />
+      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Fakturerad" GridPane.columnIndex="1" />
+      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Kund" GridPane.columnIndex="2" />
+      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Makulerad" GridPane.columnIndex="3" />
    </children>
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </padding>
 </GridPane>

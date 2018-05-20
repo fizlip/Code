@@ -1,5 +1,7 @@
 package application;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,7 +24,10 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.AnchorPane;
 import javafx.application.Application;
 
 public abstract class AdminParams extends Application{
@@ -49,8 +54,14 @@ public List<SalesMan> data = SalesForce.getSalesForce();
 	public static StringProperty sent = new SimpleStringProperty("");
 	public static StringProperty amountSoldToday = new SimpleStringProperty("");
 	public static StringProperty user = new SimpleStringProperty("");
+	public static StringProperty welcomeUser = new SimpleStringProperty("");
+	
+	
 	public static int sold = 0;
 	public static String username;
+	
+	public static boolean stopRegistration = false;
+	public static boolean stopSalesmanThread = false;
 	
 	//Search variables
 	public static JSONObject searchResult = new JSONObject(); 
@@ -97,12 +108,16 @@ public List<SalesMan> data = SalesForce.getSalesForce();
 	public static ObservableList<String[]> messages = FXCollections.observableArrayList(); 
 	public static boolean messageAdded = false;
 	public static Initiater listener;
-	
+	public static StringProperty count = new SimpleStringProperty("0");
+	public static StringProperty progressProp = new SimpleStringProperty("");
+	public static DoubleProperty progressCircleProp = new SimpleDoubleProperty(0.0);
 	
 	//Menu
 	public static String title;
 	public static String titleImage;
 	protected static String wd = "C:\\Users\\f_ill\\eclipse-workspace\\NewSystem\\build\\build\\src\\application\\";
+	protected static JSONObject orderData = new JSONObject();
+	protected static double heightFactor;
 	
 	//Salesman
 	//Text
@@ -112,4 +127,7 @@ public List<SalesMan> data = SalesForce.getSalesForce();
 	public static StringProperty avgPrice = new SimpleStringProperty("0.0");
 	public static StringProperty authority = new SimpleStringProperty("0");
 	public static StringProperty mValue = new SimpleStringProperty("0");
+	
+	//General
+	public static Dimension screenSize; 
 }

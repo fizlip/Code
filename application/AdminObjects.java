@@ -14,6 +14,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TabPane;
@@ -36,6 +38,12 @@ public class AdminObjects extends AdminParams{
 	
 	@FXML
 	protected Group titleGroup;
+	
+	@FXML
+	protected MenuButton userOptions;
+
+    @FXML
+    protected MenuItem changePassword;
 	
 	// Rectangles
 	
@@ -88,6 +96,10 @@ public class AdminObjects extends AdminParams{
     //Menu
     
     //Other
+    
+    @FXML
+    protected Text welcomeText;
+    
     @FXML
     protected Text soldTodayText;
     
@@ -123,6 +135,9 @@ public class AdminObjects extends AdminParams{
     protected Text salesManSalaryText;
     
     //Numbers general
+    @FXML
+    protected Text loggedIn;
+    
     @FXML 
     protected Text totalText;
     
@@ -143,6 +158,12 @@ public class AdminObjects extends AdminParams{
     
     @FXML
     protected Text avgTotSalesText;
+    
+    @FXML
+    protected ProgressIndicator progress;
+    
+    @FXML
+    protected Text progressText;
     
     @FXML
     protected Text totalCustomerText;

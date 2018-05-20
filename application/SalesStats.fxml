@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.Group?>
 <?import javafx.scene.chart.BarChart?>
 <?import javafx.scene.chart.CategoryAxis?>
@@ -18,11 +19,10 @@
     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
   </columnConstraints>
   <rowConstraints>
-    <RowConstraints maxHeight="182.66665649414062" minHeight="10.0" prefHeight="42.666678110758454" vgrow="SOMETIMES" />
-    <RowConstraints maxHeight="473.3333218892416" minHeight="10.0" prefHeight="473.3333218892416" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="72.00000127156576" minHeight="10.0" prefHeight="62.66666920979818" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="496.99999745686847" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="431.0" layoutX="653.0" layoutY="88.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.2" translateY="-5.0" width="1197.0" GridPane.rowIndex="1" />
       <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="56.0" layoutX="10.0" layoutY="13.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.2" translateX="10.0" width="587.0" GridPane.columnIndex="1" />
       <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="56.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.2" translateX="10.0" width="583.0" />
       <Group translateX="50.0">
@@ -81,7 +81,7 @@
             </Text>
          </children>
       </Group>
-      <StackedBarChart fx:id="statusBarchart" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="400.0" prefWidth="643.0" GridPane.rowIndex="1">
+      <StackedBarChart fx:id="statusBarchart" prefHeight="400.0" prefWidth="643.0" title="Kunder och deras Status för Respektive Säljare (FSG) " GridPane.rowIndex="1">
         <xAxis>
           <CategoryAxis side="BOTTOM" />
         </xAxis>
@@ -89,13 +89,16 @@
           <NumberAxis side="LEFT" />
         </yAxis>
       </StackedBarChart>
-      <BarChart fx:id="fsgBarchart" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="400.0" prefWidth="621.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+      <BarChart fx:id="fsgBarchart" prefHeight="400.0" prefWidth="621.0" title="Säljares FSG" GridPane.columnIndex="1" GridPane.rowIndex="1">
         <xAxis>
           <CategoryAxis side="BOTTOM" />
         </xAxis>
         <yAxis>
           <NumberAxis side="LEFT" />
         </yAxis>
+         <GridPane.margin>
+            <Insets />
+         </GridPane.margin>
       </BarChart>
    </children>
 </GridPane>

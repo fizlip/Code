@@ -68,7 +68,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <DatePicker layoutX="-21.0" promptText="Första fakturering" style="-fx-background-color: white;" translateX="105.0" />
+                  <DatePicker fx:id="datePicker" layoutX="-21.0" onAction="#dateSelected" onInputMethodTextChanged="#datePicked" promptText="Första fakturering" style="-fx-background-color: white;" translateX="105.0" />
                </children>
             </Group>
             <Button fx:id="finished" mnemonicParsing="false" onAction="#registerNewCustomerAction" onKeyPressed="#registerEnterKey" prefHeight="10.0" prefWidth="111.0" text="Klar" translateX="410.0" GridPane.rowIndex="3">

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.TextFlow?>
+
+<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="1200.0" style="-fx-background-color: white;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/9.0.1" fx:controller="application.PersFileController">
+  <columnConstraints>
+    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+  </columnConstraints>
+  <rowConstraints>
+    <RowConstraints maxHeight="128.0" minHeight="128.0" prefHeight="128.0" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="570.3333358764648" minHeight="10.0" prefHeight="522.6666666666666" vgrow="SOMETIMES" />
+  </rowConstraints>
+   <children>
+      <TextArea fx:id="personFile" prefHeight="200.0" prefWidth="200.0" visible="false" GridPane.rowIndex="1">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </TextArea>
+      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Personbeskrivning" GridPane.valignment="TOP">
+         <font>
+            <Font name="Times New Roman" size="96.0" />
+         </font>
+      </Text>
+      <Text fx:id="updateText" onMouseEntered="#mouseEnterUpdate" onMouseExited="#mouseExitUpdate" onMousePressed="#updateAction" strokeType="OUTSIDE" strokeWidth="0.0" text="Uppdatera" GridPane.halignment="RIGHT" GridPane.valignment="BOTTOM">
+         <font>
+            <Font name="Times New Roman" size="24.0" />
+         </font>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </Text>
+      <TextFlow prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
+         <children>
+            <Text fx:id="personText" strokeType="OUTSIDE" strokeWidth="0.0" text="Person Beskrivning" />
+         </children>
+      </TextFlow>
+   </children>
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </padding>
+</GridPane>

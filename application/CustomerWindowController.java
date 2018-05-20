@@ -16,6 +16,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -36,12 +37,13 @@ import helper.Register;
 public class CustomerWindowController {
 
 	public ObservableList<String> comments = FXCollections.observableArrayList();
-	private JSONObject customer;
+	public JSONObject customer;
 	private String id;
 	public static BooleanProperty customerUpdate = new SimpleBooleanProperty(false);
 	public static StringProperty currentId = new SimpleStringProperty();
 	public static String currentCustomer;
 	public static tcpCom.NetworkConnection connection;
+	public static String latestChange;
 
 	
     @FXML
@@ -143,6 +145,15 @@ public class CustomerWindowController {
     @FXML
     private Circle editCircle;
     
+    @FXML
+    void closeWindow(KeyEvent event) {
+    	if(event.getCode().equals(KeyCode.ENTER)) {
+    		Stage stage = (Stage) editCustomerGroup.getScene().getWindow();
+    		stage.close();
+    		System.out.println("close window");
+    	}
+    }
+    
     //Status rect actions
     private void nullifyRects() {
     	billedRect.setHeight(11);
@@ -155,28 +166,44 @@ public class CustomerWindowController {
     void billedRectPressed(MouseEvent event) {
     	nullifyRects();
     	billedRect.setHeight(20);
-    	latestChangeText.setText("Senaste ändring: Sälj fakturerad" );
+    	latestChange = "status till fakturerad";
+    	customer.put("Status", "Fakturerad");
+    	latestChangeText.setText("Senaste ändring: Sälj fakturerad");
+    	editCircle.setStrokeWidth(5);
+		editCircle.setStroke(Color.valueOf("#0c6dce"));
     }
 
     @FXML
     void makRectPressed(MouseEvent event) {
     	nullifyRects();
     	makRect.setHeight(20);
+    	latestChange = "status till makulerad";
+    	customer.put("Status", "Makulerad");
     	latestChangeText.setText("Senaste ändring: Sälj makulerad" );
+    	editCircle.setStrokeWidth(5);
+		editCircle.setStroke(Color.valueOf("#0c6dce"));
     }
 
     @FXML
     void customerRectPressed(MouseEvent event) {
     	nullifyRects();
     	customerRect.setHeight(20);
+    	latestChange = "status till kund";
+    	customer.put("Status", "Kund");
     	latestChangeText.setText("Senaste ändring: Sälj blir kund");
+    	editCircle.setStrokeWidth(5);
+		editCircle.setStroke(Color.valueOf("#0c6dce"));
     }
     
     @FXML
     void orderRectPressed(MouseEvent event) {
     	nullifyRects();
     	orderRect.setHeight(20);
+    	latestChange = "status till order";
+    	customer.put("Status", "Order");
     	latestChangeText.setText("Senaste ändring: Order");
+    	editCircle.setStrokeWidth(5);
+		editCircle.setStroke(Color.valueOf("#0c6dce"));
     }
     
     @FXML
@@ -262,6 +289,7 @@ public class CustomerWindowController {
     	if(event.getCode().equals(KeyCode.ENTER)) {
     		if (!writeText.getText().equals(field.getText())) {
     			latestChangeText.setText("Senaste ändring 2018-03-19 Filip Zlatoidsky ändrade " + writeText.getText() + " till " + field.getText());
+    			latestChange = writeText.getText() + " till " + field.getText();
     			writeText.setText(field.getText());
     			editCircle.setStrokeWidth(5);
     			editCircle.setStroke(Color.valueOf("#0c6dce"));
@@ -280,6 +308,11 @@ public class CustomerWindowController {
     			commentGroup.setVisible(false);
     			editCircle.setStrokeWidth(1);
     			customer.put("Kommentar", customer.get("Kommentar") + " " + commentArea.getText());
+    			
+    			String message = helper.DateHandler.getCurrentFormattedTime().toString() + " " + 
+    								AdminController.user.get() + " ändrade " + latestChange;
+    			
+    			customer.put("Senaste ändring", message);
     			editCircle.setStroke(Color.valueOf("#242424"));
     			customerUpdate.set(true);
     			currentId.set(customerIdText.getText());
@@ -298,78 +331,65 @@ public class CustomerWindowController {
     	}
     }
     
-    public void initWindow(String id){
-    	JSONObject main = (JSONObject) ReadCustomerData.readData("C:\\Users\\f_ill\\eclipse-workspace\\NewSystem\\data.json");
-    	JSONObject isgg = (JSONObject) main.get("isgg");
-    	JSONObject sales = (JSONObject) isgg.get("försäljning");
-    	Object[] names = sales.keySet().toArray();
-    	for(Object n : names) {
-    		String name = n.toString();
-    		JSONObject salesMan = (JSONObject) sales.get(name);
-    		try {
-    			JSONObject customers = (JSONObject) salesMan.get("kunder");
-    			Object[] ids = customers.keySet().toArray();
-	    		for(Object i : ids) {
-	    			String cId = i.toString();
-	    			if(cId.contains(id.trim())) {
-	    				System.out.println("Customer ID: " + cId);
-	    				customer = (JSONObject) customers.get(id);
-	    				this.id = id;
-	    				System.out.println(customer.toJSONString());
-	    				//Set customer specific text
-	    				customerNameText.setText(customer.get("Namn").toString());
-	    				personalIdText.setText(customer.get("Personnummer").toString());
-	    				adressText.setText(customer.get("Adress").toString());
-	    				postalIdAndStateText.setText(customer.get("Postnummer") + " " + customer.get("Ort"));
-	    				customerIdText.setText(customer.get("Kundnummer").toString());
-	    				telephoneText.setText(customer.get("Telefon").toString());
-	    				badgeIdText.setText(customer.get("Bricknummer").toString());
-	    				serviceText.setText(customer.get("Tjänst").toString());
-	    				priceText.setText(customer.get("Kundpris").toString());
-	    				dateText.setText(customer.get("Datum").toString());
-	    				emailText.setText("E-Mail: " + customer.get("E-Mail").toString());
-	    				
-	    				String paid = customer.get("Status").toString();
-	    				if(paid.equals("Kund")) {
-	    					statusText.setText(customer.get("Betaldatum").toString() + " Betalt: " + customer.get("Betalt").toString());
-	    				}
-	    				else if(paid.equals("Makulerad")) {
-	    					statusText.setText("Mak: " + customer.get("Mak").toString());
-	    				}
-	    				else {
-	    					statusText.setVisible(false);
-	    				}
-	    				
-	    				salesmanName.setText(name);
-	    				
-	    				comments.add(customer.get("Datum") + ": " + customer.get("Kommentar").toString());
-	    				if(!customer.get("Kommentar1").toString().equals("")) {
-	    					comments.add(customer.get("Kommentar1").toString());
-	    				}
-	    				
-	    				commentList.setItems(comments);
-	
-	    				if(customer.get("Status").toString().equals("Makulerad")) {
-	    					makRect.setHeight(20);
-	    				}
-	    				else if(customer.get("Status").toString().equals("Kund")) {
-	    					customerRect.setHeight(20);
-	    				}
-	    				else if(customer.get("Status").toString().equals("Order")) {
-	    					orderRect.setHeight(20);
-	    				}
-	    				else if(customer.get("Status").toString().equals("Fakturerad")) {
-	    					billedRect.setHeight(20);
-	    				}
-	    				else {
-	    					System.out.println("inget");
-	    				}
-	    			}
-	    		}
-    		}catch(NullPointerException e) {}
-    	}
-    	
-    }
+    public void initWindow(JSONObject customer){
+		customerNameText.setText(customer.get("Namn").toString());
+		personalIdText.setText(customer.get("Personnummer").toString());
+		adressText.setText(customer.get("Adress").toString());
+		postalIdAndStateText.setText(customer.get("Postnummer") + " " + customer.get("Ort"));
+		customerIdText.setText(customer.get("Kundnummer").toString());
+		telephoneText.setText(customer.get("Telefon").toString());
+		try {
+			badgeIdText.setText(customer.get("Bricknummer").toString());
+		}
+		catch(NullPointerException e) {
+			badgeIdText.setText("INGEN HITTAD");
+		}
+		serviceText.setText(customer.get("Tjänst").toString());
+		priceText.setText(customer.get("Kundpris").toString());
+		dateText.setText(customer.get("Datum").toString());
+		emailText.setText("E-Mail: " + customer.get("E-Mail").toString());
+		
+		String paid = customer.get("Status").toString();
+		if(paid.equals("Kund")) {
+			statusText.setText(customer.get("Betaldatum").toString() + " Betalt: " + customer.get("Betalt").toString());
+		}
+		else if(paid.equals("Makulerad")) {
+			statusText.setText("Mak: " + customer.get("Mak").toString());
+		}
+		else {
+			statusText.setVisible(false);
+		}
+		
+		salesmanName.setText((String) customer.get("Säljare"));
+		
+		comments.add(customer.get("Datum") + ": " + customer.get("Kommentar").toString());
+		try {
+			if(!customer.get("Kommentar1").toString().equals("")) {
+				comments.add(customer.get("Kommentar1").toString());
+			}
+		}	
+		catch(NullPointerException e) {
+			
+		}
+		
+		commentList.setItems(comments);
+
+		if(customer.get("Status").toString().equals("Makulerad")) {
+			makRect.setHeight(20);
+		}
+		else if(customer.get("Status").toString().equals("Kund")) {
+			customerRect.setHeight(20);
+		}
+		else if(customer.get("Status").toString().equals("Order")) {
+			orderRect.setHeight(20);
+		}
+		else if(customer.get("Status").toString().equals("Fakturerad")) {
+			billedRect.setHeight(20);
+		}
+		else {
+			System.out.println("inget");
+		}
+	}
     
     public void giveConnection(tcpCom.NetworkConnection conn) {
     	connection = conn;

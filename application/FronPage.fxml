@@ -1,53 +1,64 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="350.0" prefWidth="1200.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.FrontPageController">
+<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="350.0" prefWidth="1201.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.FrontPageController">
   <columnConstraints>
-    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+    <ColumnConstraints hgrow="SOMETIMES" maxWidth="658.6666259765625" minWidth="10.0" prefWidth="601.3333129882812" />
+      <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="598.6666870117188" />
   </columnConstraints>
   <rowConstraints>
     <RowConstraints />
-      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
-      <ImageView fx:id="titelImage" fitHeight="206.0" fitWidth="207.0" pickOnBounds="true" preserveRatio="true" translateX="900.0" translateY="-40.0" GridPane.rowIndex="1">
+      <AnchorPane layoutX="10.0" layoutY="169.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="31.0" prefWidth="600.0" style="-fx-background-color: #4c8bbb;" translateY="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+      <AnchorPane maxHeight="-Infinity" minHeight="-Infinity" prefHeight="31.0" prefWidth="600.0" style="-fx-background-color: #4c8bbb;" translateY="200.0" GridPane.rowIndex="1" />
+      <ImageView fx:id="titelImage" fitHeight="206.0" fitWidth="207.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
          <image>
             <Image url="@ISGG-logga.png" />
          </image>
       </ImageView>
-      <Text fx:id="titleText" strokeType="OUTSIDE" strokeWidth="0.0" text="Titel" translateX="20.0" GridPane.rowIndex="1">
+      <Text fx:id="titleText" strokeType="OUTSIDE" strokeWidth="0.0" text="Titel" translateX="20.0" translateY="75.0" GridPane.rowIndex="1">
          <font>
-            <Font name="BodoniFLF-Roman" size="96.0" />
+            <Font name="Times New Roman" size="96.0" />
          </font>
       </Text>
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#001e37" height="30.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.25" translateX="-10.0" translateY="100.0" width="1218.0" GridPane.rowIndex="1" />
-      <Text fx:id="uTitle1" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="UnderTitel1" translateX="30.0" translateY="100.0" GridPane.rowIndex="1">
-         <font>
-            <Font name="Times New Roman" size="18.0" />
-         </font>
-      </Text>
-      <Text fx:id="uTitle2" fill="WHITE" layoutX="10.0" layoutY="168.0" strokeType="OUTSIDE" strokeWidth="0.0" text="UnderTitel2" translateX="300.0" translateY="100.0" GridPane.rowIndex="1">
+      <Text fx:id="uTitle1" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="UnderTitel1" translateX="30.0" translateY="205.0" GridPane.rowIndex="1">
          <font>
             <Font name="Times New Roman" size="18.0" />
          </font>
       </Text>
-      <Text fx:id="uTitle3" fill="WHITE" layoutX="10.0" layoutY="168.0" strokeType="OUTSIDE" strokeWidth="0.0" text="UnderTitel3" translateX="600.0" translateY="100.0" GridPane.rowIndex="1">
+      <Text fx:id="uTitle2" fill="WHITE" layoutX="10.0" layoutY="168.0" strokeType="OUTSIDE" strokeWidth="0.0" text="UnderTitel2" translateX="300.0" translateY="205.0" GridPane.rowIndex="1">
          <font>
             <Font name="Times New Roman" size="18.0" />
          </font>
       </Text>
-      <Text fx:id="uTitle4" fill="WHITE" layoutX="10.0" layoutY="168.0" strokeType="OUTSIDE" strokeWidth="0.0" text="UnderTitel2" translateX="900.0" translateY="100.0" GridPane.rowIndex="1">
+      <Text fx:id="uTitle3" fill="WHITE" layoutX="10.0" layoutY="168.0" strokeType="OUTSIDE" strokeWidth="0.0" text="UnderTitel3" translateX="600.0" translateY="205.0" GridPane.rowIndex="1">
          <font>
             <Font name="Times New Roman" size="18.0" />
          </font>
       </Text>
+      <Text fx:id="uTitle4" fill="WHITE" layoutX="10.0" layoutY="168.0" strokeType="OUTSIDE" strokeWidth="0.0" text="UnderTitel2" translateX="900.0" translateY="205.0" GridPane.rowIndex="1">
+         <font>
+            <Font name="Times New Roman" size="18.0" />
+         </font>
+      </Text>
+      <ImageView fx:id="addButton" fitHeight="73.0" fitWidth="44.0" onMouseEntered="#enterAction" onMouseExited="#exitAction" onMousePressed="#addAction" pickOnBounds="true" preserveRatio="true" translateX="-100.0" translateY="195.0" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+         <image>
+            <Image url="@add-circle-blue-512.png" />
+         </image>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </ImageView>
    </children>
 </GridPane>

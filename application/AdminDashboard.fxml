@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.Group?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
@@ -11,55 +15,53 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane id="background" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="1290.0" style="-fx-background-color: 0000;" styleClass="background" stylesheets="@application.css" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.AdminController">
+<GridPane fx:id="adminHeader" prefHeight="650.0" prefWidth="1290.0" style="-fx-background-color: #f2f2f2;" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.AdminController">
+   <columnConstraints>
+      <ColumnConstraints hgrow="SOMETIMES" maxWidth="100.0" minWidth="0.0" prefWidth="85.33330917358398" />
+      <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="1205.3333574930828" />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints maxHeight="44.00000762939453" minHeight="10.0" prefHeight="30.666671752929688" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="243.33331807454428" minHeight="45.0" prefHeight="49.33332824707031" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="1.7976931348623157E308" minHeight="0.0" prefHeight="569.3333422342936" vgrow="ALWAYS" />
+   </rowConstraints>
    <children>
-      <GridPane fx:id="adminHeader" prefHeight="650.0" prefWidth="1290.0" style="-fx-background-color: #f2f2f2;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="414.6666259765625" minWidth="0.0" prefWidth="83.33334350585938" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="1207.999979654948" minWidth="10.0" prefWidth="1207.3333231608074" />
-         </columnConstraints>
-         <rowConstraints>
-            <RowConstraints maxHeight="44.00000762939453" minHeight="9.66666730244954" prefHeight="21.666664123535156" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="243.33331807454428" minHeight="0.0" prefHeight="34.66666666666666" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="584.6666666666667" minHeight="0.0" prefHeight="566.6666666666666" vgrow="SOMETIMES" />
-         </rowConstraints>
+      <MenuButton fx:id="userOptions" mnemonicParsing="false" onAction="#userOptionsPressed" text="Användare" translateX="-50.0" visible="false" GridPane.columnIndex="1" GridPane.halignment="RIGHT">
+        <items>
+          <MenuItem fx:id="changePassword" mnemonicParsing="false" onAction="#changePasswordAction" text="Ändra lösenord" />
+        </items>
+      </MenuButton>
+      <Group translateY="-10.0" GridPane.rowIndex="1">
          <children>
-            <TextField fx:id="searchField" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onKeyPressed="#searchKeyPressed" onKeyReleased="#searchKeyReleased" prefHeight="32.0" prefWidth="1073.0" promptText="Tryck på Enter för att söka" translateX="100.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-               <font>
-                  <Font size="18.0" />
-               </font>
-            </TextField>
-            <Group translateY="-10.0" GridPane.rowIndex="1">
+            <ImageView fx:id="logoPic" fitHeight="114.0" fitWidth="109.0" onMousePressed="#backToDefault" pickOnBounds="true" preserveRatio="true" translateY="-5.0">
+               <image>
+                  <Image url="@ISGG-logga.png" />
+               </image>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </ImageView>
+         </children>
+      </Group>
+      <AnchorPane maxWidth="-Infinity" minWidth="-Infinity" prefHeight="567.0" prefWidth="59.0" style="-fx-background-color: white; -fx-border-color: lightgray;" GridPane.rowIndex="2">
+         <children>
+            <GridPane layoutX="-70.0" layoutY="138.0" prefHeight="570.0" prefWidth="59.333333333333336" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints maxHeight="102.99998474121094" minHeight="10.0" prefHeight="66.99999872843424" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="301.00000762939453" minHeight="0.0" prefHeight="74.33333460489911" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="402.66665649414057" minHeight="10.0" prefHeight="89.00001780192056" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="402.66665649414057" minHeight="10.0" prefHeight="83.66666158040368" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="402.66665649414057" minHeight="10.0" prefHeight="196.0000508626302" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="402.66665649414057" minHeight="10.0" prefHeight="76.6666158040365" vgrow="SOMETIMES" />
+              </rowConstraints>
                <children>
-                  <ImageView fx:id="logoPic" fitHeight="114.0" fitWidth="109.0" onMousePressed="#backToDefault" pickOnBounds="true" preserveRatio="true" translateY="-5.0">
-                     <image>
-                        <Image url="@ISGG-logga.png" />
-                     </image>
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor>
-                  </ImageView>
-                  <Text fx:id="adminHeaderText" layoutX="14.0" layoutY="63.0" onMousePressed="#backToDefault" opacity="0.8" strokeType="OUTSIDE" strokeWidth="0.0" text="Admin" translateX="65.0" translateY="9.0">
-                     <font>
-                        <Font name="BodoniFLF-Roman" size="36.0" />
-                     </font>
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor>
-                  </Text>
-               </children>
-            </Group>
-            <Button mnemonicParsing="false" onMousePressed="#connectToServer" text="Server" GridPane.columnIndex="1" />
-            <Button mnemonicParsing="false" onMousePressed="#connectClient" text="Klient" translateX="50.0" GridPane.columnIndex="1" />
-            <Button fx:id="simSaleButton" mnemonicParsing="false" onAction="#addSale" text="Simulera Sälj" translateX="250.0" GridPane.columnIndex="1" />
-            <AnchorPane fx:id="listPane" prefHeight="569.0" prefWidth="195.0" GridPane.rowIndex="2">
-               <children>
-                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="582.0" layoutY="-14.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.25" translateY="15.0" width="64.0" />
-                  <ImageView fx:id="homeLogo" fitHeight="71.0" fitWidth="49.0" layoutX="8.0" layoutY="31.0" onMouseEntered="#mouseEnterTitle" onMouseExited="#mouseExitTitle" onMousePressed="#titlePressed" opacity="0.75" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="homeLogo" fitHeight="71.0" fitWidth="49.0" onMouseEntered="#mouseEnterTitle" onMouseExited="#mouseExitTitle" onMousePressed="#titlePressed" opacity="0.75" pickOnBounds="true" preserveRatio="true" translateX="3.0">
                      <image>
                         <Image url="@home.png" />
                      </image>
@@ -67,7 +69,7 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </ImageView>
-                  <ImageView fx:id="salesLogo" fitHeight="39.0" fitWidth="46.0" layoutX="13.0" layoutY="116.0" onMouseEntered="#mouseEnterTitle" onMouseExited="#mouseExitTitle" onMousePressed="#titlePressed" opacity="0.75" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="salesLogo" fitHeight="39.0" fitWidth="46.0" onMouseEntered="#mouseEnterTitle" onMouseExited="#mouseExitTitle" onMousePressed="#titlePressed" opacity="0.75" pickOnBounds="true" preserveRatio="true" translateX="8.0" GridPane.rowIndex="1">
                      <image>
                         <Image url="@business-statistics-graphic_318-56146.jpg" />
                      </image>
@@ -75,7 +77,7 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </ImageView>
-                  <ImageView fx:id="customersLogo" fitHeight="39.0" fitWidth="39.0" layoutX="13.0" layoutY="200.0" onMouseEntered="#mouseEnterTitle" onMouseExited="#mouseExitTitle" onMousePressed="#titlePressed" opacity="0.75" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="customersLogo" fitHeight="39.0" fitWidth="39.0" onMouseEntered="#mouseEnterTitle" onMouseExited="#mouseExitTitle" onMousePressed="#titlePressed" opacity="0.75" pickOnBounds="true" preserveRatio="true" translateX="8.0" GridPane.rowIndex="2">
                      <image>
                         <Image url="@custServ.png" />
                      </image>
@@ -83,7 +85,7 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </ImageView>
-                  <ImageView fx:id="salesmenLogo" fitHeight="49.0" fitWidth="49.0" layoutX="8.0" layoutY="302.0" onMouseEntered="#mouseEnterTitle" onMouseExited="#mouseExitTitle" onMousePressed="#titlePressed" opacity="0.75" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="salesmenLogo" fitHeight="49.0" fitWidth="49.0" onMouseEntered="#mouseEnterTitle" onMouseExited="#mouseExitTitle" onMousePressed="#titlePressed" opacity="0.75" pickOnBounds="true" preserveRatio="true" translateX="3.0" GridPane.rowIndex="3">
                      <image>
                         <Image url="@customerlogo.png" />
                      </image>
@@ -91,65 +93,100 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </ImageView>
+                  <ImageView fx:id="questionLogo" fitHeight="55.0" fitWidth="56.0" onMouseEntered="#mouseEnterTitle" onMouseExited="#mouseExitTitle" onMousePressed="#titlePressed" opacity="0.75" pickOnBounds="true" preserveRatio="true" translateX="3.0" GridPane.rowIndex="4">
+                     <image>
+                        <Image url="@fråga.png" />
+                     </image>
+                  </ImageView>
                </children>
-            </AnchorPane>
-            <ScrollPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
-              <content>
-                <AnchorPane fx:id="menuPane" maxHeight="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="570.0" prefWidth="1200.0" style="-fx-background-color: white;">
-                     <children>
-                        <Group fx:id="nextPageGroup" layoutX="435.0" layoutY="14.0" onMousePressed="#nextPageAction" visible="false">
-                           <children>
-                              <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="39.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.25" width="200.0" />
-                              <Text layoutX="58.0" layoutY="24.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Visa mer" textAlignment="CENTER" wrappingWidth="83.99999968707561" />
-                           </children>
-                           <cursor>
-                              <Cursor fx:constant="HAND" />
-                           </cursor>
-                        </Group>
-                        <Text fx:id="resultsTextTitle" layoutX="14.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Resultat">
-                           <font>
-                              <Font name="Times New Roman" size="12.0" />
-                           </font>
-                        </Text>
-                     </children></AnchorPane>
-              </content>
-            </ScrollPane>
-            <Text fx:id="perSec" strokeType="OUTSIDE" strokeWidth="0.0" text="0" translateX="800.0" GridPane.columnIndex="1">
+            </GridPane>
+         </children></AnchorPane>
+      <Button fx:id="simSaleButton" mnemonicParsing="false" onAction="#addSale" text="Simulera Sälj" translateX="250.0" GridPane.columnIndex="1" />
+      <ScrollPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;" GridPane.columnIndex="1" GridPane.rowIndex="2">
+         <content>
+            <AnchorPane fx:id="menuPane" prefHeight="565.0" prefWidth="1200.0" style="-fx-background-color: white;">
+               <children>
+                  <Text fx:id="welcomeText" layoutX="9.0" layoutY="287.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Välkommen FilipADMIN" textAlignment="CENTER" wrappingWidth="1181.4700317382812">
+                     <font>
+                        <Font name="Times New Roman" size="72.0" />
+                     </font>
+                  </Text>
+                  <ProgressIndicator fx:id="progress" layoutX="446.0" layoutY="129.0" prefHeight="307.0" prefWidth="308.0" progress="0.0" visible="false" />
+                  <Text fx:id="progressText" layoutX="477.0" layoutY="449.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" textAlignment="CENTER" visible="false" wrappingWidth="244.13671875">
+                     <font>
+                        <Font name="Times New Roman" size="14.0" />
+                     </font>
+                  </Text>
+               </children></AnchorPane>
+         </content>
+      </ScrollPane>
+      <Text fx:id="perSec" strokeType="OUTSIDE" strokeWidth="0.0" text="0" translateX="-300.0" GridPane.columnIndex="1" GridPane.halignment="RIGHT">
+         <font>
+            <Font name="Times New Roman" size="24.0" />
+         </font>
+      </Text>
+      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Sälj:" translateX="400.0" GridPane.columnIndex="1">
+         <font>
+            <Font name="Times New Roman" size="18.0" />
+         </font>
+      </Text>
+      <Text fx:id="amountSoldText" strokeType="OUTSIDE" strokeWidth="0.0" text="0" translateX="440.0" GridPane.columnIndex="1">
+         <font>
+            <Font name="Times New Roman" size="24.0" />
+         </font>
+      </Text>
+      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Inloggade:" GridPane.columnIndex="1" GridPane.halignment="CENTER">
+         <font>
+            <Font name="Times New Roman" size="18.0" />
+         </font>
+      </Text>
+      <Text fx:id="loggedIn" strokeType="OUTSIDE" strokeWidth="0.0" text="0" translateX="50.0" GridPane.columnIndex="1" GridPane.halignment="CENTER">
+         <font>
+            <Font name="Times New Roman" size="24.0" />
+         </font>
+      </Text>
+      <ImageView fitHeight="37.0" fitWidth="61.0" onMousePressed="#userPressed" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="RIGHT">
+         <image>
+            <Image url="@user_logo.png" />
+         </image>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </ImageView>
+      <Text fx:id="userText" onMousePressed="#userPressed" strokeType="OUTSIDE" strokeWidth="0.0" text="Användare" translateX="-50.0" GridPane.columnIndex="1" GridPane.halignment="RIGHT">
+         <font>
+            <Font name="Times New Roman" size="18.0" />
+         </font>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </Text>
+      <GridPane GridPane.columnIndex="1" GridPane.rowIndex="1">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="104.0" minWidth="10.0" prefWidth="103.33333333333333" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="1095.3333333333333" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Text fx:id="adminHeaderText" onMousePressed="#backToDefault" opacity="0.8" strokeType="OUTSIDE" strokeWidth="0.0" text="Admin">
                <font>
-                  <Font name="Times New Roman" size="24.0" />
+                  <Font name="Times New Roman" size="36.0" />
                </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
             </Text>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Sälj:" translateX="400.0" GridPane.columnIndex="1">
+            <TextField fx:id="searchField" maxHeight="-Infinity" minHeight="-Infinity" onKeyPressed="#searchKeyPressed" onKeyReleased="#searchKeyReleased" prefHeight="32.0" prefWidth="1073.0" promptText="Tryck på Enter för att söka" GridPane.columnIndex="1">
                <font>
-                  <Font name="Times New Roman" size="18.0" />
+                  <Font size="18.0" />
                </font>
-            </Text>
-            <Text fx:id="amountSoldText" strokeType="OUTSIDE" strokeWidth="0.0" text="0" translateX="440.0" GridPane.columnIndex="1">
-               <font>
-                  <Font name="Times New Roman" size="24.0" />
-               </font>
-            </Text>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Inloggade:" translateX="600.0" GridPane.columnIndex="1">
-               <font>
-                  <Font name="Times New Roman" size="18.0" />
-               </font>
-            </Text>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="0" translateX="685.0" GridPane.columnIndex="1">
-               <font>
-                  <Font name="Times New Roman" size="24.0" />
-               </font>
-            </Text>
-            <ImageView fitHeight="37.0" fitWidth="61.0" pickOnBounds="true" preserveRatio="true" translateX="1000.0" GridPane.columnIndex="1">
-               <image>
-                  <Image url="@../../../../Downloads/a558682b158debb6d6f49d07d854f99f-casual-male-avatar-silhouette-by-vexels.png" />
-               </image>
-            </ImageView>
-            <Text fx:id="userText" strokeType="OUTSIDE" strokeWidth="0.0" text="Användare" translateX="1050.0" GridPane.columnIndex="1">
-               <font>
-                  <Font name="Times New Roman" size="18.0" />
-               </font>
-            </Text>
+            </TextField>
          </children>
+         <GridPane.margin>
+            <Insets right="15.0" />
+         </GridPane.margin>
       </GridPane>
    </children>
-</AnchorPane>
+</GridPane>

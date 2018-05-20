@@ -37,6 +37,9 @@ public class CustomerPaneController {
 	private static List<Object> keys = new ArrayList<>();
 	
 	public static tcpCom.NetworkConnection connection;
+	public JSONObject customer;
+	public String salesman;
+	
 	
 	@FXML
     private ResourceBundle resources;
@@ -218,7 +221,8 @@ public class CustomerPaneController {
     		
     		Scene scene = new Scene(root, 520, 615);
     		CustomerWindowController con = loader.getController();
-    		con.initWindow(customerId);
+    		con.customer = customer;
+    		con.initWindow(customer);
     		scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
     		customerStage.setTitle("Kundfönster");
     		customerStage.setScene(scene);
@@ -260,13 +264,19 @@ public class CustomerPaneController {
     	
     }
     
-    public void printResult(String name, String customerNumber, String serviceText, String salesman, int currentPage) {
+    public void printResult(JSONObject customerInfo, int currentPage) {
+    	String name = (String) customerInfo.get("Namn");
+		String customerNumber = (String) customerInfo.get("Kundnummer");
+		String serviceText = (String) customerInfo.get("Tjänst");
+		String sale = (String) customerInfo.get("Säljare");
+    	
     	keys = Arrays.asList(searchResult.keySet().toArray());
     	customerId = updateId(customerNumber);
+    	
     	searchResultText.setText(customerNumber + ": " + name);
     	serviceTextNew.setText(serviceText);
-    	latestChangeTextNew.setText("Senaste ändring: Ingen hittad");
-    	salesManNameText.setText(salesman);
+    	latestChangeTextNew.setText( (String) customerInfo.get("Senaste ändring"));
+    	salesManNameText.setText(sale);
     	System.out.println(currentPage);
     }
     

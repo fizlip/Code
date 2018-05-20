@@ -6,89 +6,95 @@
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="567.0" prefWidth="1200.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.SalesManPaneController">
+<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.SalesManPaneController">
+  <columnConstraints>
+      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+  </columnConstraints>
+  <rowConstraints>
+      <RowConstraints maxHeight="135.0" minHeight="0.0" prefHeight="130.0" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="521.3333333333333" minHeight="0.0" prefHeight="469.33333333333337" vgrow="SOMETIMES" />
+  </rowConstraints>
    <children>
-      <Text fx:id="nameText" layoutX="14.0" layoutY="118.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Förnamn">
+      <Text fx:id="nameText" strokeType="OUTSIDE" strokeWidth="0.0" text="Förnamn" GridPane.valignment="TOP">
          <font>
-            <Font name="BodoniFLF-Roman" size="96.0" />
+            <Font name="Times New Roman" size="96.0" />
          </font>
       </Text>
-      <BarChart fx:id="statusBarChart" layoutX="59.0" layoutY="180.0" prefHeight="357.0" prefWidth="500.0">
-        <xAxis>
-          <CategoryAxis side="BOTTOM" />
-        </xAxis>
-        <yAxis>
-          <NumberAxis side="LEFT" />
-        </yAxis>
+      <BarChart fx:id="statusBarChart" prefHeight="357.0" prefWidth="500.0" GridPane.rowIndex="1">
+         <xAxis>
+            <CategoryAxis side="BOTTOM" />
+         </xAxis>
+         <yAxis>
+            <NumberAxis side="LEFT" />
+         </yAxis>
       </BarChart>
-      <LineChart fx:id="salesLineChart" layoutX="622.0" layoutY="180.0" prefHeight="357.0" prefWidth="500.0">
-        <xAxis>
-          <CategoryAxis side="BOTTOM" />
-        </xAxis>
-        <yAxis>
-          <NumberAxis side="LEFT" />
-        </yAxis>
+      <LineChart fx:id="salesLineChart" prefHeight="357.0" prefWidth="500.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+         <xAxis>
+            <CategoryAxis side="BOTTOM" />
+         </xAxis>
+         <yAxis>
+            <NumberAxis side="LEFT" />
+         </yAxis>
       </LineChart>
-      <Text layoutX="491.0" layoutY="90.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Sålt:">
-         <font>
-            <Font name="BodoniFLF-Roman" size="36.0" />
-         </font>
-      </Text>
-      <Text fx:id="amountSoldText" layoutX="570.0" layoutY="90.0" strokeType="OUTSIDE" strokeWidth="0.0" text="XX">
-         <font>
-            <Font name="Times New Roman Bold" size="36.0" />
-         </font>
-      </Text>
-      <Text layoutX="654.0" layoutY="90.0" strokeType="OUTSIDE" strokeWidth="0.0" text="för:">
-         <font>
-            <Font name="BodoniFLF-Roman" size="36.0" />
-         </font>
-      </Text>
-      <Text fx:id="priceText" layoutX="720.0" layoutY="91.0" strokeType="OUTSIDE" strokeWidth="0.0" text="XX">
-         <font>
-            <Font name="Times New Roman Bold" size="36.0" />
-         </font>
-      </Text>
-      <Text layoutX="491.0" layoutY="112.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Medelpris:">
-         <font>
-            <Font name="Times New Roman" size="14.0" />
-         </font>
-      </Text>
-      <Text fx:id="avgPriceText" layoutX="559.0" layoutY="112.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text">
-         <font>
-            <Font name="Times New Roman Bold" size="14.0" />
-         </font>
-      </Text>
-      <MenuButton layoutX="1023.0" layoutY="65.0" mnemonicParsing="false" text="Auktoritet">
-        <items>
-          <MenuItem fx:id="auth1" mnemonicParsing="false" onAction="#updateAuth" text="1" />
-          <MenuItem fx:id="auth2" mnemonicParsing="false" onAction="#updateAuth" text="2" />
-            <MenuItem fx:id="auth3" mnemonicParsing="false" onAction="#updateAuth" text="3" />
-        </items>
-      </MenuButton>
-      <Text layoutX="643.0" layoutY="112.0" strokeType="OUTSIDE" strokeWidth="0.0" text="m: ">
-         <font>
-            <Font name="Times New Roman" size="14.0" />
-         </font>
-      </Text>
-      <Text fx:id="mvpValue" layoutX="668.0" layoutY="112.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0">
-         <font>
-            <Font name="Times New Roman Bold" size="14.0" />
-         </font>
-      </Text>
-      <Text layoutX="720.0" layoutY="112.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Auktoritet: ">
-         <font>
-            <Font name="Times New Roman" size="14.0" />
-         </font>
-      </Text>
-      <Text fx:id="authorityText" layoutX="785.0" layoutY="112.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0">
-         <font>
-            <Font name="Times New Roman Bold" size="14.0" />
-         </font>
-      </Text>
+      <GridPane fx:id="userSettings" GridPane.columnIndex="1" GridPane.valignment="TOP">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Uppgifter" underline="true">
+               <font>
+                  <Font name="Times New Roman" size="24.0" />
+               </font>
+            </Text>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Användarnamn:" GridPane.rowIndex="1">
+               <font>
+                  <Font name="Times New Roman" size="14.0" />
+               </font>
+            </Text>
+            <Text layoutX="10.0" layoutY="80.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Auktoritet:" GridPane.rowIndex="2">
+               <font>
+                  <Font name="Times New Roman" size="14.0" />
+               </font>
+            </Text>
+            <Text fx:id="userText" layoutX="10.0" layoutY="80.0" strokeType="OUTSIDE" strokeWidth="0.0" text="användare" GridPane.columnIndex="1" GridPane.rowIndex="1">
+               <font>
+                  <Font name="Times New Roman Bold" size="14.0" />
+               </font>
+            </Text>
+            <Text fx:id="authorityText" layoutX="10.0" layoutY="96.0" strokeType="OUTSIDE" strokeWidth="0.0" text="auktoritet" GridPane.columnIndex="1" GridPane.rowIndex="2">
+               <font>
+                  <Font name="Times New Roman Bold" size="14.0" />
+               </font>
+            </Text>
+            <Text layoutX="10.0" layoutY="64.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Ändra lösenord" GridPane.columnIndex="2" GridPane.rowIndex="1">
+               <font>
+                  <Font name="Times New Roman" size="14.0" />
+               </font>
+            </Text>
+            <MenuButton fx:id="authMenu" mnemonicParsing="false" style="-fx-background-color: white; -fx-border-color: gray;" text="Auktoritet" GridPane.columnIndex="2" GridPane.rowIndex="2">
+               <items>
+                  <MenuItem fx:id="auth1" mnemonicParsing="false" onAction="#updateAuth" text="Säljare" />
+                  <MenuItem fx:id="auth2" mnemonicParsing="false" onAction="#updateAuth" text="Utökad Säljare" />
+                  <MenuItem fx:id="auth3" mnemonicParsing="false" onAction="#updateAuth" text="Administratör" />
+               </items>
+            </MenuButton>
+         </children>
+      </GridPane>
    </children>
-</AnchorPane>
+</GridPane>

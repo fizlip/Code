@@ -4,9 +4,12 @@ package application;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.text.DecimalFormat;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 
 import org.json.simple.parser.ParseException;
 //import org.json.JSONObject;
@@ -32,9 +35,11 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.text.*;
 import javafx.scene.chart.*;
 import javafx.fxml.Initializable;
+import javafx.geometry.HPos;
 import javafx.scene.image.Image;
 import javafx.scene.web.*;
 import javafx.scene.input.KeyCode;
@@ -80,11 +85,48 @@ public class AdminController extends AdminObjects implements Initializable{
 	private static JSONObject reqdData = new JSONObject();
 	private Thread thread;
 	private String currentSearch;
-	private Stage processingStage = new Stage();
+	public static Stage passwordStage = new Stage();
+	private JSONObject homeData;
+	private JSONObject statsData;
+	private JSONObject customerData;
+	private JSONObject salesData;
+	private Long updateFreq = 60L;
+	private Long lastUpdate = 0L;
+	//private JSONObject customerData;
 	
 	//Server
 	//Client newClient = new Client("192.168.1.67", 24);
 	
+	@FXML
+    void userOptionsPressed(ActionEvent event) {
+
+    }
+	@FXML
+    void changePasswordAction(ActionEvent event) {
+		System.out.println("SHOW PASSWORD");
+    	try {
+    		FXMLLoader passwordLoader = new FXMLLoader(getClass().getResource("PasswordChange.fxml"));
+    		AnchorPane passwordDialog = passwordLoader.load();
+    		Scene passwordScene = new Scene(passwordDialog, 470, 280);
+    		passwordScene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+    		passwordStage.setTitle("Ändra Lösenord");
+    		passwordStage.setScene(passwordScene);
+    		passwordStage.show();
+    		passwordStage.setAlwaysOnTop(true);
+    	}catch(Exception e) {
+    		e.printStackTrace();
+    	}
+		
+    }
+	
+	@FXML
+    void userPressed(MouseEvent event) {
+		userOptions.show();
+    }
+	
+	
+	@FXML
+	private GridPane adminHeader;
 	
 	@Override
 	public void stop() throws Exception{
@@ -92,6 +134,7 @@ public class AdminController extends AdminObjects implements Initializable{
 	    CreateCharts.terminateChartThread = true;
 	    connection.closeConnection();
 		System.out.println("Connection closed");
+		System.exit(0);
 	}
 	
 	/*
@@ -103,7 +146,7 @@ public class AdminController extends AdminObjects implements Initializable{
 		teminateThread = true;
 	    CreateCharts.terminateChartThread = true;   
 	    System.out.println("STOP");
-		Platform.exit();
+		//System.exit(0);
 		}
 	
 	@FXML
@@ -245,6 +288,7 @@ public class AdminController extends AdminObjects implements Initializable{
     		isServer = false;
     		connection = createClient();
     		connection.startConnection();
+    		ProcessingController.loadProp.set("Ansluter till server...");
     		serverCom.set("Klient kopplad till localhost");
     	}catch(Exception e) {
     		serverCom.set("Kunde inte koppla klient till localhost");
@@ -283,33 +327,114 @@ public class AdminController extends AdminObjects implements Initializable{
     }
     
     private tcpCom.Client createClient(){
-    	return new tcpCom.Client("127.0.0.1", 55555, data ->{
+    	return new tcpCom.Client(LoginController.serverAdress, 55555, data ->{
     		Platform.runLater(() ->{
     			ChatController.arrived = true;
     			currentMessage = data.toString();
     			String[] formattedMessage = AdminController.currentMessage.split(" START");
-    			System.out.println(formattedMessage[0]);
+    			String[] messageDef = formattedMessage[0].split(";");
+    			System.out.println("Typen: " + Arrays.toString(messageDef));
+        		
+    			//progressProp.set("Konfigurerar data");
+    			//progressCircleProp.set(0.25);
+    			
     			if(ChatController.type.equals("m")) {
     				listener.addMessage();
     			}
-    			else if(formattedMessage[0].equals("SEND")) {
+    			else if(messageDef[0].equals("INC LOGIN")) {
+    				Integer c = Integer.parseInt(count.get());
+    				c += 1;
+    				count.set(Integer.toString(c));
+    			}
+    			else if(messageDef[0].equals("SEND")) {
     				post(formattedMessage[1]);
     			}
     			
-    			else if(formattedMessage[0].equals("DATA")) {
-    				data(formattedMessage[1]);
+    			else if(messageDef[0].equals("DATA")) {
+    				
+    				if(formattedMessage[1].equals("AUTHENTICATED")) {
+    					passwordStage.close();
+    					Alert alert = new Alert(AlertType.CONFIRMATION, "Ditt lösenord har nu uppdaterats", 
+								ButtonType.OK); 
+    					alert.showAndWait();
+    				}
+    				else if(formattedMessage[1].equals("WRONG PASSWORD")) {
+    					PasswordDialogController.errorText.set("Gammalt lösenord felaktigt");
+    				}
+    				else {
+    					data(formattedMessage[1], messageDef[1]);
+    				}
+    				
     			}
-    			
-    			else if(formattedMessage[0].equals("MENU")) {
+    			else if(messageDef[0].trim().equals("SALE")) {
+    				incSale(formattedMessage[1]);
+    			}
+    			else if(menuSearch(messageDef[0])) {
     				JSONObject sales = parseSearch(formattedMessage[1]);
-    				getSalesManPane(true, sales);
+    				if(messageDef[1].toLowerCase().equals("försäljning")) {
+    					if(messageDef[0].equals("SALESMEN")) {
+    						getSalesManPane(true, sales);
+    					}
+    					if(messageDef[0].equals("STATS")) {
+    						//AllSalesController.updateChart(sales);
+    						getSalesMenu(sales);
+    					}
+    				}
+    				if(messageDef[1].toLowerCase().equals("användare")) {
+    					//init user
+    					JSONObject userData = parseSearch(formattedMessage[1]); 
+    					JSONObject mData = (JSONObject) userData.get("meta data");
+    					welcomeUser.set( "Välkommen " + (String) mData.get("användarnamn") );
+    				}
+    				if(messageDef[1].toLowerCase().equals("kunddata")) {
+    					JSONObject customerData = parseSearch(formattedMessage[1]);
+    					updateCustomerTableData(customerData);
+    				    					
+    					//CreateCharts.initSeries(customerData);
+    				}
+    				else if(messageDef[1].toLowerCase().equals("order")) {
+    					data(formattedMessage[1], messageDef[1]);
+    				}
     			}
     			
     			else {
     				listener.addSale();
     			}
+    			//progressProp.set("Klar");
+    			//progressCircleProp.set(1);
+    			//progress.setVisible(false);
+    			//progressText.setVisible(false);
     		});
     	});
+    }
+    
+    private boolean menuSearch(String item) {
+    	String[] menuItems = {"HOME", "STATS", "CUSTOMERS", "SALESMEN", "OTHER"};
+    	if(Arrays.asList(menuItems).contains(item)) {
+    		return true;
+    	}
+    	return false;
+    }
+    
+    private void handleMenuInput(String input) {
+    	
+    }
+    
+    private void updateCustomerTableData(JSONObject customerData) {
+    	CustomersTableController.customerData = (JSONObject) customerData.get("kund");
+    	CustomersTableController.updateData(customerData);
+    }
+    
+    private void incSale(String customer) {
+    	JSONObject cData = parseSearch(customer);
+    	//billing.addOrder(data);
+    	listener.addOrder(cData);
+    	CreateCharts.addSale();
+    	listener.addSale();
+    	sold += 1;
+    	String[] m = {"Nytt sälj", "s"};
+    	messages.add(m);
+    	amountSoldText.setText(Integer.toString(sold));
     }
     
     @FXML
@@ -333,10 +458,22 @@ public class AdminController extends AdminObjects implements Initializable{
     }
     
     
-    private void data(String message) {
+    private void data(String message, String type) {
     	JSONObject searchJson = new JSONObject();
-		reqdData =  parseSearch(message);
-		
+    	if(type.toLowerCase().equals("order")) {
+    		System.out.println("TYP " + type);
+    		System.out.println(searchJson.toJSONString());
+    		orderData = parseSearch(message);
+    		BillingController.allOrders = parseSearch(message);
+    	}
+    	if(type.toLowerCase().equals("update")) {
+    		System.out.println("UPDATE");
+    		orderData = parseSearch(message);
+    		listener.updateStatus();
+    	}
+    	else {
+    		reqdData =  parseSearch(message);
+    	}		
     }
     
     private void post(String message) {
@@ -349,6 +486,7 @@ public class AdminController extends AdminObjects implements Initializable{
     	keys = Arrays.asList(searchResult.keySet().toArray());
     	Object[] searchKeys = searchJson.keySet().toArray();
     	CustomerPaneController.searchResult = searchJson;
+    	currentPage = 0;
     	
     	
     	//Salesman search
@@ -364,7 +502,6 @@ public class AdminController extends AdminObjects implements Initializable{
     	}
     	// misc search
     	catch(NullPointerException e1) {
-    		e1.printStackTrace();
     		for(Object k : searchKeys) {
 	    		if(currentPage < pageSize) {
 	    			String key = k.toString();
@@ -378,9 +515,9 @@ public class AdminController extends AdminObjects implements Initializable{
 				    	getResult(searchJson);currentPage=0;break;
 				     }
 	    		}else {
-	    			nextPageGroup.setVisible(true);
-	    			nextPageGroup.setLayoutY(y);
-	    			nextPageGroup.toFront();
+	    			//nextPageGroup.setVisible(true);
+	    			//nextPageGroup.setLayoutY(y);
+	    			//nextPageGroup.toFront();
 	    			break;}
 	    	}
     	}
@@ -418,7 +555,7 @@ public class AdminController extends AdminObjects implements Initializable{
     	y = 50; //y pos of initial customer panel
     	height = menuPane.getPrefHeight();
     	menuPane.getChildren().clear();
-    	menuPane.getChildren().add(nextPageGroup);
+    	//menuPane.getChildren().add(nextPageGroup);
     }
     
     private void sendSearch(String search) {
@@ -426,7 +563,7 @@ public class AdminController extends AdminObjects implements Initializable{
 		System.out.println("STARTING SEARCH");
 		try {
 			System.out.println("GET: " + ChatController.type);
-			send(user.get() + " - GET: " + search);
+			send(user.get() + " - GET: " + search + ": sök");
 		} catch (Exception e) {
 			System.out.println("Could not send message");
 			e.printStackTrace();
@@ -466,18 +603,31 @@ public class AdminController extends AdminObjects implements Initializable{
 	    	}
 	    	
 	    	else if(search.toLowerCase().equals("ny kund")) {
-	    		//RegisterController registration = new RegisterController(user);
-	    		//registration.showWindow();
-	    		Thread registrationThread = new Thread() {
+	    		Stage stage = new Stage();
+	         	try {
+	     			AnchorPane root = FXMLLoader.load(getClass().getResource("CustomerRegistration.fxml"));
+	     			Scene scene = new Scene(root,900,650);
+	     			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+	     			stage.setAlwaysOnTop(true);
+	     			stage.setScene(scene);
+	     			stage.setTitle("Kund Registrering");
+	     			stage.show();
+	     		} catch(Exception e) {
+	     			e.printStackTrace();
+	     		}
+	         	
+	        	Thread registrationThread = new Thread() {
 	    			public void run() {
-	    				while(true) {
-	    					if(RegisterController.customer != null) {
-	    						send(user.get() + " - NEW: " + user + ": " + RegisterController.customer);
-	    						RegisterController.customer = null;
+	    				while(!stopRegistration) {
+	    					if(RegisterController.newCustomer.get()) {
+	    						send(user.get() + " - " + "NEW: " + ": " + RegisterController.getCustomer());
+	    						RegisterController.newCustomer.set(false);
+	    						break;
 	    					}
 	    				}
 	    			}
 	    		};
+	    		registrationThread.start();
 	    	}
 	    	//Searches are put in three categories: salesman, command line and customer searches 
 	    	else if (search.length() > 0){
@@ -485,84 +635,23 @@ public class AdminController extends AdminObjects implements Initializable{
 	    		System.out.println("STARTING SEARCH");
 	    		try {
 	    			System.out.println("GET: " + ChatController.type);
-					send(user.get() + " - GET: " + search);
+					send(user.get() + " - GET: " + search + ": sök");
 				} catch (Exception e) {
 					System.out.println("Could not send message");
 					e.printStackTrace();
 				}
 	    	}
-	    		/*
-	    		JSONObject searchJson = (JSONObject) Register.get(StringUtils.capitalize(search));
-	    		JSONObject salesmen = (JSONObject) Register.get("försäljning");
-	    		searchResult = searchJson;
-		    	Set<Object> salesmenKey = salesmen.keySet();
-		    	results = searchJson.size();
-		    	for(Object key : salesmenKey.toArray()) {
-		    		if(key.toString().toLowerCase().equals(search)) {
-		    			System.out.println(StringUtils.capitalize(search));
-		    			series = new XYChart.Series<>();
-		    			salesManSearch(key.toString(), (JSONObject) Register.get(key.toString()));
-		    			//Search finished
-		    			searchFinished();
-		    			resultFound = true;
-		    			return;
-		    		}
-		    	}
-		    	keys = Arrays.asList(searchResult.keySet().toArray());
-		    	Object[] searchKeys = searchJson.keySet().toArray();
-		    	CustomerPaneController.searchResult = searchJson;
-		    	for(Object k : searchKeys) {
-		    		if(currentPage < pageSize) {
-		    			String key = k.toString();
-		    			//salesGridPane.setVisible(false);salesGridPane.toBack();
-				    	//salesSearchPane.setVisible(true);
-				    	resultFound = true;
-		    			currentPage += 1;
-		    			try {
-				    		JSONObject customer = (JSONObject) searchJson.get(key);
-				    		getResult(customer);
-		    			}
-					     catch(ClassCastException e) {
-					    	getResult(searchJson);currentPage=0;break;
-					     }
-		    		}else {
-		    			nextPageGroup.setVisible(true);
-		    			nextPageGroup.setLayoutY(y);
-		    			nextPageGroup.toFront();
-		    			break;}
-		    	}
-		    }
-		    resultsTextTitle.setText("Resultat för " + search.trim() + ": " + Integer.toString(results));
-		    menuPane.getChildren().add(resultsTextTitle);
-		    //customerInfoPane.getChildren().add(resultsText);resultsText.setText(Integer.toString(results));
-		    searchFinished();
-		    if(resultFound) {
-		    	return;
-		    }
-		    String searchResult = GetFile.searchDrive(search, service); 
-		    if(!searchResult.trim().equals("Inga resultat")) {
-		    	salesSearchPane.setVisible(true);
-		    	driveSearchLabel.setVisible(true);menuPane.setVisible(true);
-		    	driveSearchLabel = new Label(searchResult);
-		    	menuPane.setPrefSize(driveSearchLabel.getPrefHeight(), driveSearchLabel.getPrefWidth());
-		    	menuPane.getChildren().add(driveSearchLabel);
-		    	
-		    	searchFinished();
-		    	return;
-		    		
-		    }
-		*/
 	    }
     }
     
     private void salesManSearch(String name, JSONObject salesman) {
     	//Initialize sales view
+    	stopSalesmanThread = true;
     	String format = "#.#";
     	DecimalFormat newFormat = new DecimalFormat(format);
     	JSONObject metaData = (JSONObject) salesman.get("meta data");
     	List<Long> contained = new ArrayList<>();
 		contained.add(0, 0L);
-    	getSalesManPane(false, null);
 		// Get data for sales-barchart
 		SalesMan s = new helper.SalesMan(name, (JSONObject) salesman);
 		
@@ -570,25 +659,33 @@ public class AdminController extends AdminObjects implements Initializable{
 		Map<String, Number> mapping = s.getMapping();
 		
 		//Set text fields
+		//progressProp.set("Initierar skärm");
+		//progressCircleProp.set(0.5);
 		salesmanName.set(s.getName());
 		salesToday.set(Integer.toString(s.getAmountSold()));
 		salesmanSalary.set(newFormat.format(s.getSalary()));
 		avgPrice.set(newFormat.format((s.getSalary() / s.getAmountSold())));
-		mValue.set(newFormat.format(metaData.get("mvp")));
+		try {
+			mValue.set(newFormat.format(metaData.get("mvp")));
+		}catch(Exception e) {
+			e.printStackTrace();
+			mValue.set("Kan ej hittas");
+		}
 		authority.set(metaData.get("auktoritet").toString());
 
 		
 		//Get formatted date of every day in the mapping
 		series = DateHandler.getDateSeries(series, mapping, contained);
-		
+		getSalesManPane(false, salesman);
 		// Add data to charts
 		CreateCharts.getSalemanStatusData(salesman);
 		//System.out.println("STARTING SALES THREAD");
+		stopSalesmanThread = false;
 		Thread salesmanThread = new Thread("listen for salesman change") {
 			public void run() {
-				while(true) {
+				while(!stopSalesmanThread) {
 					if(SalesManPaneController.update.get()) {
-						send(user.get() + " - UPDATE" + ": " + authority.get() + ": " + "auktoritet" + ": " + "meta data" + ": " + name);
+						send(user.get() + " - UPDATE" + ": " + authority.get() + ": " + "auktoritet" + ": " + "meta data" + ": " + salesmanName.get());
 						SalesManPaneController.update.set(false);
 					}
 				}
@@ -630,12 +727,9 @@ public class AdminController extends AdminObjects implements Initializable{
 		   	menuPane.getChildren().add(root);
 		   	
 		    CustomerPaneController con = loader.getController();
-		    
-		    String namn = (String) customerInfo.get("Namn");
-		    String kundnummer = (String) customerInfo.get("Kundnummer");
-		    String tjänst = (String) customerInfo.get("Tjänst");
 		    //Register.get(kundnummer);
-		    con.printResult(namn, kundnummer, tjänst, Register.currentSalesman, currentPage);
+		    con.customer = customerInfo;
+		    con.printResult(customerInfo, currentPage);
 		    //Rita customerPane på korrekt plats på skärmen
 		    root.setLayoutY(y); root.toBack();
 		    y += heightAdd + 5;
@@ -708,7 +802,7 @@ public class AdminController extends AdminObjects implements Initializable{
     		String item = new String();
     		for(Map.Entry<String, Customer> customer: data.get(i).getSalesMapping().entrySet()) {
 	    		Customer customerInfo = customer.getValue();
-	    		item = SalesForce.allSales[i] + ": " + customerInfo.get("Kundpris");
+	    		item = SalesForce.allSales.get(i) + ": " + customerInfo.get("Kundpris");
 	    		itemsSold.add(item);
     		}
     	}
@@ -720,14 +814,24 @@ public class AdminController extends AdminObjects implements Initializable{
      * Menu functions
      */
     
-    private void getSalesMenu() {
+    private void getSalesMenu(JSONObject data) {
+    	ProcessingController.loadProp.set("Initierar hemskärm...");
     	title = "Försäljning";
     	titleImage = wd+"business-statistics-graphic_318-56146.jpg";
     	try {
     		FXMLLoader titleLoader = new FXMLLoader(getClass().getResource("FronPage.fxml"));
     		GridPane title = titleLoader.load();
+    		title.setPrefWidth(menuPane.getPrefWidth());
+    		
+    		if((DateHandler.getCurrentTimeSec() - lastUpdate) > updateFreq) {
+    			AllSalesController.updateChart(data);
+    			lastUpdate = DateHandler.getCurrentTimeSec();
+    		}
+    		
     		FXMLLoader allSalesLoader = new FXMLLoader(getClass().getResource("AllSalesChart.fxml"));
     		GridPane chart = allSalesLoader.load();
+    		chart.setPrefWidth(menuPane.getPrefWidth());
+    		chart.setPrefHeight(560 * heightFactor);
     		
     		FrontPageController.uTitle1Prop.set("Alltid");
 			FrontPageController.uTitle2Prop.set("Säljare");
@@ -736,10 +840,11 @@ public class AdminController extends AdminObjects implements Initializable{
 
     		FXMLLoader salesStatsLoader = new FXMLLoader(getClass().getResource("SalesStats.fxml"));
     		GridPane stats = salesStatsLoader.load();
+    		stats.setPrefWidth(menuPane.getPrefWidth());
+    		stats.setPrefHeight(560 * heightFactor);
     		
     		chart.setLayoutY(500);
     		stats.setLayoutY(chart.getPrefHeight() + 600);
-    		
     		menuPane.getChildren().addAll(title, chart, stats);
     		menuPane.setPrefHeight(menuPane.getPrefHeight() + stats.getPrefHeight() + chart.getPrefHeight());
     		
@@ -764,6 +869,7 @@ public class AdminController extends AdminObjects implements Initializable{
 		s2.setY(400 + i*225);s2.setX(200);
 		s2.setFont(Font.font("Times New Roman", 18));
 		//m-värde
+		System.out.println(mData.get("mvp"));
 		Double mvp = (Double) mData.get("mvp");
 		Text s3 = new Text("m: " + mvp);
 		s3.setY(400 + i*225);s3.setX(350);
@@ -782,6 +888,7 @@ public class AdminController extends AdminObjects implements Initializable{
 		AdminController.series = new XYChart.Series<>();
 		
 		Map<String, Number> mapping = salesman.getMapping();
+		System.out.println(k);
 		AdminController.series = DateHandler.getDateSeries(AdminController.series, mapping, contained);
 		
 		helper.Days gridData = new helper.Days();
@@ -804,12 +911,19 @@ public class AdminController extends AdminObjects implements Initializable{
     		if(header) {
 	    		FXMLLoader titleLoader = new FXMLLoader(getClass().getResource("FronPage.fxml"));
 	    		GridPane title = titleLoader.load();
+	    		title.setPrefWidth(menuPane.getPrefWidth());
 	    		menuPane.getChildren().add(title);
 	    		FrontPageController.uTitle1Prop.set("Säljare");
 				FrontPageController.uTitle2Prop.set("");
 				FrontPageController.uTitle3Prop.set("");
 				FrontPageController.uTitle4Prop.set("");
-						
+					
+				if((DateHandler.getCurrentTimeSec() - lastUpdate) > updateFreq) {
+	    			CreateCharts.resetCharts();
+	    			CreateCharts.initSeries(sales);
+	    			lastUpdate = DateHandler.getCurrentTimeSec();
+	    		}
+				
 				Text tot = new Text();
 				tot.setText("Antal äntällda: " + Integer.toString(sales.size()));
 				tot.setY(300);
@@ -826,9 +940,32 @@ public class AdminController extends AdminObjects implements Initializable{
     		}
     		else {
     			FXMLLoader loader = new FXMLLoader(getClass().getResource("SalesManPane.fxml"));
-        		AnchorPane salesmanPane = loader.load();
+        		GridPane salesmanPane = loader.load();
+        		salesmanPane.setPrefWidth(menuPane.getPrefWidth());
+        		salesmanPane.setPrefHeight(600 * heightFactor);
+
+        		SalesDataController.data = (JSONObject) sales.get("meta data");
+        		SalesDataController.customers = (JSONObject) sales.get("kunder");
+        		FXMLLoader dataLoader = new FXMLLoader(getClass().getResource("SalesmanData.fxml"));
+        		GridPane dataPane = dataLoader.load();
+        		dataPane.setPrefWidth(menuPane.getPrefWidth());
+        		dataPane.setPrefHeight(190 * heightFactor);
+
+        		FXMLLoader personFileLoader = new FXMLLoader(getClass().getResource("persFile.fxml"));
+        		GridPane personFile = personFileLoader.load();
+        		personFile.setPrefWidth(menuPane.getPrefWidth());
+        		personFile.setPrefHeight(650 * heightFactor);
+        		
+        		SalesManPaneController controller = loader.getController();
+        		controller.salesman = SalesDataController.data;
+        		controller.write();
+        		menuPane.getChildren().add(dataPane);
         		menuPane.getChildren().add(salesmanPane);
-        		menuPane.setPrefHeight(menuPane.getPrefHeight() + salesmanPane.getPrefHeight());
+        		dataPane.setLayoutY(salesmanPane.getPrefHeight() + 50);
+        		personFile.setLayoutY(salesmanPane.getPrefHeight() + dataPane.getPrefHeight() + 100);
+        		menuPane.getChildren().add(personFile);
+        		personFile.toFront();
+        		menuPane.setPrefHeight(menuPane.getPrefHeight() + salesmanPane.getPrefHeight() + dataPane.getHeight() + + personFile.getHeight() + 100);
     		}
     	}
     	catch(IOException | java.text.ParseException e) {
@@ -842,8 +979,25 @@ public class AdminController extends AdminObjects implements Initializable{
     	try {
 	    	FXMLLoader titleLoader = new FXMLLoader(getClass().getResource("FronPage.fxml"));
     		GridPane title = titleLoader.load();
+    		title.setPrefWidth(menuPane.getPrefWidth());
+
+    		
+    		/*
+    		send(user.get() + " - GET: order: init");
+    		try {
+				TimeUnit.SECONDS.sleep(2);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			*/
 	    	FXMLLoader customerTable = new FXMLLoader(getClass().getResource("AllCustomersTable.fxml"));
 			GridPane table = customerTable.load();
+    		table.setPrefWidth(menuPane.getPrefWidth());
+    		table.setPrefHeight(560 * heightFactor);
+
+			FXMLLoader billingLoader = new FXMLLoader(getClass().getResource("Billing.fxml"));
+			BillingController.allOrders = orderData;
+			ScrollPane billingTable = billingLoader.load();
 			
 			FrontPageController.uTitle1Prop.set("Orderkollen");
 			FrontPageController.uTitle2Prop.set("Faktureringar");
@@ -852,11 +1006,11 @@ public class AdminController extends AdminObjects implements Initializable{
 			
 			//FXMLLoader mapLoader = new FXMLLoader(getClass().getResource("MapFullscreen.fxml"));
 			//GridPane map = mapLoader.load();
+			billingTable.setLayoutY(500);
+			table.setLayoutY(billingTable.getLayoutY() + 500);
 			
-			table.setLayoutY(500);
-			
-			menuPane.getChildren().addAll(title, table);
-			menuPane.setPrefHeight(menuPane.getPrefHeight() + table.getPrefHeight());
+			menuPane.getChildren().addAll(title, table, billingTable);
+			menuPane.setPrefHeight(menuPane.getPrefHeight() + table.getPrefHeight() + billingTable.getPrefHeight());
 		}catch(IOException e) {
 			//Om inladdning misslyckas skriv ut felet i terminalen
 			e.printStackTrace();
@@ -866,9 +1020,27 @@ public class AdminController extends AdminObjects implements Initializable{
     private void getHomeScreen() {
 		FXMLLoader homeLoader = new FXMLLoader(getClass().getResource("HomeScreen.fxml"));
 		try {
-			AnchorPane home = homeLoader.load();
+			GridPane home = homeLoader.load();
+    		home.setPrefWidth(menuPane.getPrefWidth());
+    		home.setPrefHeight(550 * heightFactor);
+    		
     		menuPane.getChildren().add(home);
     		menuPane.setPrefHeight(menuPane.getPrefHeight());
+    	}catch(IOException e) {
+    		e.printStackTrace();
+    	}
+    }
+    
+    private void getQuestionScreen() {
+    	FXMLLoader helpLoader = new FXMLLoader(getClass().getResource("HelpScreen.fxml"));
+		try {
+			GridPane help = helpLoader.load();
+
+			help.setPrefWidth(700);
+			help.setPrefHeight(2000);
+    		menuPane.getChildren().add(help);
+    		help.setLayoutX(menuPane.getWidth()/4);
+    		menuPane.setPrefHeight(help.getPrefHeight());
     	}catch(IOException e) {
     		e.printStackTrace();
     	}
@@ -877,7 +1049,10 @@ public class AdminController extends AdminObjects implements Initializable{
     private void getMenuItem(String title) {
     	menuPane.setPrefHeight(570);
     	if(title.equals("salesLogo")) {
-    		getSalesMenu();
+    		//progress.setVisible(true);
+    		//progressText.setVisible(true);
+    		//progressProp.set("Kontaktar server");
+    		send(user.get() + " - GET: försäljning;statistik: meny");
     	}
     	else if(title.equals("customersLogo")) {
     		getCustomersMenu();
@@ -886,35 +1061,30 @@ public class AdminController extends AdminObjects implements Initializable{
     		getHomeScreen();
     	}
     	else if(title.equals("salesmenLogo")) {
-    		send(user.get() + " - GET: försäljning: meny");
+    		//progress.setVisible(true);
+    		//progressText.setVisible(true);
+    		//progressProp.set("Kontaktar server");
+    		send(user.get() + " - GET: försäljning;säljare: meny");
     	}
-    }
-    
-    
-    private void showProcessingWindow() {
-    	processingStage = new Stage();
-    	try {
-	    	FXMLLoader windowLoader = new FXMLLoader(getClass().getResource("ProcessingWindow.fxml"));
-	    	AnchorPane window = windowLoader.load();
-    		Scene scene = new Scene(window,400,170);
-			//scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-			processingStage.initStyle(StageStyle.UNDECORATED);
-			processingStage.setAlwaysOnTop(true);
-			processingStage.setScene(scene);
-			processingStage.show();
-		}catch(IOException e) {
-			//Om inladdning misslyckas skriv ut felet i terminalen
-			e.printStackTrace();
+    	else if(title.equals("questionLogo")) {
+    		getQuestionScreen();
     	}
-    }
-    
-    private void closeProcessingWindow() {
-    	processingStage.close();
     }
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+    	screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    	adminHeader.setPrefHeight(screenSize.getHeight());
+    	adminHeader.setPrefWidth(screenSize.getWidth());
+    	menuPane.prefWidthProperty().bind(adminHeader.widthProperty().multiply(0.935));
+    	SalesManPaneController.userRequest = false;
+    	//menuPane.prefHeightProperty().bind(adminHeader.heightProperty().multiply(0.935));
+    	
+    	heightFactor = ((Double) screenSize.getHeight()) / 650;
+    	
     	userText.textProperty().bind(user);
+    	welcomeText.textProperty().bind(welcomeUser);
+    	connectClient();
     	//SalesForce.createSalesForce();
     	//googleMapView.addMapInializedListener(this);
         assert summaryButton != null : "fx:id=\"summaryButton\" was not injected: check your FXML file 'AdminDashboard.fxml'.";
@@ -940,9 +1110,7 @@ public class AdminController extends AdminObjects implements Initializable{
 	        Image logo = new Image(input);
 	        //logoPic.setImage(logo);
         }catch(FileNotFoundException e) {e.printStackTrace();}
-        CreateCharts.initSeries();
         //serverText.textProperty().bind(serverCom);
-        getSalesMenu();
         listener = new Initiater();
         thread = new Thread("PerSec") {
         	public void run() {
@@ -960,8 +1128,12 @@ public class AdminController extends AdminObjects implements Initializable{
         thread.start();
         CreateCharts.startThread();
         CustomerPaneController.connection = connection;
-        connectClient();
-    	
+        loggedIn.textProperty().bind(count);
+        send(user.get() + " - INC: LOGIN");
+        send(user.get() + " - GET: order: init");
+        //progressText.textProperty().bind(progressProp);
+        //progress.progressProperty().bind(progressCircleProp);
+        //getSalesMenu();
     }  
     
 }

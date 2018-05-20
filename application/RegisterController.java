@@ -14,6 +14,7 @@ import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
@@ -28,13 +29,15 @@ import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import java.text.*;
+import java.time.LocalDate;
+
 import javafx.scene.input.*;
 import javafx.scene.control.TextArea;
 
 public class RegisterController{
 	
 	public static XYChart.Series personalSalesAmount = new XYChart.Series<>();
-	public static XYChart.Series<Integer, Integer> personalSales = new XYChart.Series<>();
+	public static XYChart.Series<Integer, Double> personalSales = new XYChart.Series<>();
 	public static ObservableList<String> items = FXCollections.observableArrayList(); 
 	public static float progress = 0.0f;
 	public static JSONObject customer;
@@ -42,6 +45,7 @@ public class RegisterController{
 	private String user;
 	public static BooleanProperty newCustomer = new SimpleBooleanProperty(false);
 	private static int boxSelected = 0;
+	private static LocalDate date;
 	//private static StringProperty c = new SimpleStringProperty();
 	
     @FXML
@@ -90,6 +94,9 @@ public class RegisterController{
     private Button finished;
     
     @FXML
+    private DatePicker datePicker;
+    
+    @FXML
     private Rectangle box1;
 
     @FXML
@@ -103,6 +110,17 @@ public class RegisterController{
 
     @FXML
     private Rectangle box5;
+    
+    @FXML
+    void datePicked(InputMethodEvent event) {
+
+    }
+
+    @FXML
+    void dateSelected(ActionEvent event) {
+    	date = datePicker.getValue();
+    	System.out.println("SELECTED DATE: " + datePicker.getValue());
+    }
     
     @FXML
     void boxEntered(MouseEvent event) {
@@ -140,32 +158,31 @@ public class RegisterController{
     @FXML
     void boxExited(MouseEvent event) {
     	Rectangle r = (Rectangle) event.getSource();
-    	System.out.println(boxSelected);
     	Rectangle[] rs = {box1, box2, box3, box4, box5};
     	if(r.getId().equals("box1") && boxSelected < 1) {
     		for(int i = boxSelected ; i < 1; i++) {
-    			rs[i].setFill(Color.WHITE);rs[i].setStrokeWidth(0);
+    			rs[i].setFill(Color.WHITE);rs[i].setStrokeWidth(1);
     		}
     	}
     	else if(r.getId().equals("box2") && boxSelected < 2) {
     		for(int i = boxSelected ; i < 2; i++) {
-    			rs[i].setFill(Color.DODGERBLUE);rs[i].setStrokeWidth(0);
+    			rs[i].setFill(Color.WHITE);rs[i].setStrokeWidth(1);
     		}
     	}
     	else if(r.getId().equals("box3") && boxSelected < 3) {
     		for(int i = boxSelected ; i < 3; i++) {
-    			rs[i].setFill(Color.DODGERBLUE);rs[i].setStrokeWidth(0);
+    			rs[i].setFill(Color.WHITE);rs[i].setStrokeWidth(1);
     		}
     	}
     	else if(r.getId().equals("box4") && boxSelected < 4) {
     		for(int i = boxSelected ; i < 4; i++) {
-    			rs[i].setFill(Color.DODGERBLUE);rs[i].setStrokeWidth(0);
+    			rs[i].setFill(Color.WHITE);rs[i].setStrokeWidth(1);
     		}
 	
     	}
     	else if(r.getId().equals("box5") && boxSelected < 5) {
     		for(int i = boxSelected ; i < 5; i++) {
-    			rs[i].setFill(Color.DODGERBLUE);rs[i].setStrokeWidth(0);
+    			rs[i].setFill(Color.WHITE);rs[i].setStrokeWidth(1);
     		}
     	}
     }
@@ -204,7 +221,6 @@ public class RegisterController{
     
     @FXML
     void registerNewCustomerAction(ActionEvent event) {
-    	UsecController.incAmountSold();
     	// Spara informatio om kund och skapa word dokument
     	Registration reg = new Registration(user);
     	customer = reg.registerNewCustomer(nameField.getText(), adressField.getText(), 
@@ -212,6 +228,12 @@ public class RegisterController{
     							personalIdField.getText(), ortField.getText(), postCodeField.getText(), "Nyckelbricka",
     							emailField.getText());
     	    	
+    	customer.put("Säljare", LoginController.userProp.get());
+    	customer.put("Samtals Kvalitet", boxSelected);
+    	customer.put("Fakturering", date.toString());
+    	customer.put("Datum", DateHandler.getCurrentFormattedTime());
+    	customer.put("Status", "Order");
+    	customer.put("Kommentar1", "");
     	newCustomer.set(true);
     	// Uppdatera alla klienters skärmar
     	addPeripherals();    	
@@ -226,7 +248,6 @@ public class RegisterController{
     
     private void addPeripherals() {
     	Long now = System.currentTimeMillis();
-    	Date date = new Date(now);
     	DateFormat formatter = new SimpleDateFormat("HH:mm");
     	String formatedTime = formatter.format(now);
     	String newSaleLogbookMessage = " " + AdminController.username + ": Nytt sälj, " + priceField.getText() + " SEK";  
@@ -236,6 +257,9 @@ public class RegisterController{
     	// Uppdatera grafer
     	updateCharts();
     	
+    	Double fsg = Double.parseDouble(priceField.getText().toString().replace(',', '.'));
+    	
+    	UsecController.incAmountSold(fsg);
     	UsecController.incX();
     }
     
@@ -268,7 +292,7 @@ public class RegisterController{
     
     private void updateCharts() {
     	///Histogram data
-    	XYChart.Data newSale = new XYChart.Data("Fredag", UsecController.amountSold);
+    	XYChart.Data newSale = new XYChart.Data(DateHandler.getCurrentFormattedTime(), UsecController.amountSold);
     	//Line chart data
     	XYChart.Data priceOfSale = new XYChart.Data<Double, Double>(UsecController.x,Double.parseDouble(priceField.getText()));
     	
@@ -298,6 +322,5 @@ public class RegisterController{
     @FXML
     void initialize() {
         assert finished != null : "fx:id=\"finished\" was not injected: check your FXML file 'CustomerRegistration.fxml'.";
-
     }
 }
