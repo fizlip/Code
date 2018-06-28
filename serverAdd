@@ -1,0 +1,34 @@
+public static void export(String type) {
+		SalesForce.createAllSales();
+		boolean first = true;
+		try {
+			FileWriter writer = new FileWriter("C:\\ISGG\\Data\\" + type + ".csv");
+			for(String salesman : SalesForce.allSales) {
+				JSONObject sm = get(salesman);
+				JSONObject customers = (JSONObject) sm.get("kunder");
+				for(Object c : customers.keySet()) {
+					JSONObject cust = (JSONObject) customers.get(c);
+					writeCustomer(cust, writer, first);
+					first = false;
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void writeCustomer(JSONObject customer, FileWriter writer, boolean header) {
+		List<String> line = new ArrayList<>();
+		if(header) {
+			for(Object c: customer.keySet()) {
+				line.add(c.toString());
+			}
+		}
+		else {
+			for(Object c : customer.keySet()) {
+				String field = (String) customer.get(c).toString();
+				line.add(field);
+			}
+		}
+		Drive.CSVFactory.writeCSV(line, writer);
+	}
