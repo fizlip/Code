@@ -1,0 +1,101 @@
+package helper;
+
+import org.json.simple.JSONObject;
+
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Alert.AlertType;
+import javafx.stage.Stage;
+import tcpCom.ISGGServer;
+import application.ServerInterface;
+
+public class Update {
+
+	
+	private String field;
+	private String position;
+	private String data;
+	private String key;
+	private String user;
+	
+	public Update(String field, String position, String data, String key, String user) {
+		this.field = field;
+		this.position = position;
+		this.data = data;
+		this.key = key;
+		this.user = user;
+	}
+	
+	public String updateElement() {
+		System.out.println(field + " " + position + " " + data + " " + user);
+		/* Update specific salesman field. A meta data field will only exist if the key is a salesman*/
+		if(data.equals("meta data")) {
+			updateSalesman();
+			return null;
+		}
+		else {
+			/* Update elements that need authetication */
+			if(!Register.getAuth(user).equals("1") || position.equals(user)) {
+				return userAuthorizedToUpdate();
+			}
+			else {
+				Alert alert = new Alert(AlertType.ERROR, "Auktoritet 2 eller högre krävs för att göra denna ändringen.\nUppdaterigen som skrevs kommer INTE att sparas.", 
+										ButtonType.OK);
+				Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+				stage.setAlwaysOnTop(true);
+				alert.showAndWait();
+				return null;
+			}
+		}
+	}
+	
+	private void updateSalesman() {
+		/* Get data from register */
+		JSONObject search = Register.get(key);
+		JSONObject mData = (JSONObject) search.get("meta data");
+		String salesman = (String) mData.get("användarnamn");
+		/* Update register */
+		Register.add(field, position, data, salesman);
+	}
+	
+	private String userAuthorizedToUpdate() {
+		System.out.println("Field: " + field);
+		
+		String result = null;
+		/*Update register */
+		JSONObject customer = ServerInterface.parseSearch(data);
+		if(customer.get("ADD") != null) {
+			System.out.println("ADD");
+			String[] added = customer.get("ADD").toString().split(";"); 
+			if(added[0].equals("R")) {
+				WriteSalary.addSalary(added[1], Double.parseDouble(added[3]) * 0.8);
+				WriteSalary.addSalary(added[2], -Double.parseDouble(added[3]) * 0.8);
+			}
+			else {
+				double commision = WriteSalary.calculateCommision(added[1], added[0]);
+				WriteSalary.addSalary(customer.get("Säljare").toString().split("@")[0], commision);
+			}
+		}
+		customer.remove("ADD");
+		Register.add(customer, field, field);
+		//Register.addOrder();
+		ISGGServer.publicMessage = "Kund " + customer.get("Kundnummer") + " ändrades av" + user;
+		try {
+			result = "DATA;update START" + Register.get("order");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	private void userNotAuthorizedToUpdate() {
+		Alert alert = new Alert(AlertType.ERROR, 
+				"Auktoritet 2 eller högre krävs för att göra denna ändringen."
+				+ "\nUppdaterigen som skrevs kommer INTE att sparas.", 
+				ButtonType.OK);
+		Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+		stage.setAlwaysOnTop(true);
+		alert.showAndWait();
+	}
+	
+}
