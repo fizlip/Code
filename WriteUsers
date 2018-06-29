@@ -1,0 +1,45 @@
+package helper;
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class WriteUser {
+
+	public static void initUser(List<List<String>> userList) {
+		SalesForce.createAllSales();
+		FileWriter writer;
+		try {
+			writer = new FileWriter("C:\\ISGG\\Data\\UserList.csv");
+			for(List<String> user : userList) {
+				Drive.CSVFactory.writeCSV(user, writer);
+			}
+			writer.flush();
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void addUser(String user) {
+		List<String> userList = new ArrayList<>();
+		userList.add(user);
+		FileWriter writer;
+		try {
+			List<List<String>> list = Drive.CSVFactory.readFile("C:\\ISGG\\Data\\UserList.csv");
+			writer = new FileWriter("C:\\ISGG\\Data\\UserList.csv");
+			list.add(userList);
+			for(List<String> u : list) {
+				Drive.CSVFactory.writeCSV(u, writer);
+			}
+			writer.flush();
+			writer.close();
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void main(String[] args) {
+	}	
+}
