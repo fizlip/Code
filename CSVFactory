@@ -1,0 +1,647 @@
+package Drive;
+
+import com.opencsv.CSVReader;
+
+import helper.SalesForce;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+
+public class CSVFactory {
+	public static final String folderPath = "C:\\ISGG\\Hämtade Filer";
+	public static final String destinationPath = "C:\\ISGG\\Hämtade Filer\\Kundregister.csv";
+	public static int na = 0;
+	public static int total = 0;
+	
+	/*
+	 * Combines all csv filed in specified folder into one
+	 */
+	public static void combine() {
+		new File("C:\\ISGG\\Hämtade Filer").mkdir();
+		File folder = new File(folderPath);
+		CSVReader reader = null;
+		try {
+			FileWriter writer = new FileWriter(destinationPath);
+			SalesForce.createAllSales();
+			for(File fileEntry : folder.listFiles()) {
+				if(!fileEntry.toString().contains(destinationPath)) {
+					writeFileToDestination(fileEntry.toString(), reader, writer);
+				}
+			}
+			for(String name : SalesForce.allSales) {
+				String salesPath = "C:\\ISGG\\Hämtade Filer\\" + name + "Sälj.csv";
+				FileWriter w = new FileWriter(salesPath);
+				reader = null;
+				for(File fileEntry : folder.listFiles()) {
+					System.out.println(name);
+					if(fileEntry.toString().toLowerCase().contains(name.toLowerCase())) {
+						writeFileToDestination(fileEntry.toString(), reader, w);
+					}
+				}
+				w.flush();
+				w.close();
+			}
+			System.out.println("Total amount: " + total);
+			System.out.println("NA amount: " + na);
+			System.out.println("Percentage NA: " + (na / total) * 100 + "%");
+			writer.flush();
+			writer.close();
+		}
+		catch(IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static List<List<String>> readFile(String filename) throws FileNotFoundException{
+		File file = new File(filename);
+		CSVReader reader = new CSVReader(new FileReader(filename.toString()));
+		String[] line;
+		List<List<String>> result = new ArrayList<>();
+		try {
+			while((line = reader.readNext()) != null) {
+				List<String> observation = new ArrayList<>();
+				try {
+					for(String obj : line) {
+						observation.add(obj);
+					}
+				}
+				catch(ArrayIndexOutOfBoundsException e) {
+					e.printStackTrace();
+				}
+			result.add(observation);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	
+	/*
+	 * Read two dimensions from a filename and store the result in list
+	 * 
+	 * @Param filename = the filename being read
+	 * @Param col1 = the y-axis of the resulting 2d List<String>
+	 * @Param col2 = the x-axis of resulting List<String>
+	 */
+	private static List<List<String>> readFile2d(String filename, List<Integer> cols) throws FileNotFoundException {
+		File file = new File(filename);
+		CSVReader reader = new CSVReader(new FileReader(filename.toString()));
+		String[] line;
+		List<List<String>> result = new ArrayList<>();
+		try {
+			while((line = reader.readNext()) != null) {
+				List<String> observation = new ArrayList<>();
+				try {
+					for(Integer c : cols)
+					observation.add(line[c]);
+				}
+				catch(ArrayIndexOutOfBoundsException e) {
+					e.printStackTrace();
+				}
+			result.add(observation);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return result;
+		
+	}
+	
+	private static void writeFileToDestination(String filename, CSVReader reader, FileWriter writer) throws IOException {
+		String[] line;
+		reader = new CSVReader(new FileReader(filename.toString()));
+		while((line = reader.readNext()) != null) {
+			if(line[0].contains("Personnummer")) {
+				List<String> lineAsList = convertToList(line);
+				lineAsList.remove(6);
+				lineAsList.remove(19);
+				lineAsList.add(0, "Kundnummer");
+				
+				
+				lineAsList.remove(8);
+				lineAsList.remove(9);
+				lineAsList.remove(10);
+				lineAsList.remove(11);
+				lineAsList.add(6, "Postnummer");
+				lineAsList.add(7, "Ort");
+				if(lineAsList.size() > 21) {
+					ArrayList<String> result = new ArrayList<>(lineAsList.subList(0, 21));
+					try {
+						CSVUtils.writeLine(writer, result);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				else {
+					ArrayList<String> result = new ArrayList<>(lineAsList.subList(0, 21));
+					try {
+						CSVUtils.writeLine(writer, result);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+			if(!line[0].isEmpty() && !line[0].contains("Personnummer") && !Arrays.asList(line).contains("ORDERKOLL")) {
+				List<String> lineAsList = convertToList(line);
+				try{
+					String badgeNumbers = lineAsList.get(20).replace(",", "-");
+					for(int j = 0; j < lineAsList.size(); j++) {
+						String newE = lineAsList.get(j).replaceAll(",", ".");
+						newE = newE.replaceAll("\n", "");
+						lineAsList.remove(j);
+						lineAsList.add(j, newE);
+					}
+					String custId = lineAsList.get(19);
+					lineAsList.remove(19);
+					lineAsList.add(0, custId);
+					
+					lineAsList.remove(20);
+					lineAsList.add(20, badgeNumbers);
+					String[] formattedLocation = formatLocation(line[6]);
+					lineAsList.remove(6);
+					lineAsList.add(6, formattedLocation[0]);
+					lineAsList.add(7, formattedLocation[1]);
+					if(Arrays.asList(formattedLocation).contains("NA")) {
+						na += 1;
+					}
+					total += 1;
+					lineAsList.remove(8);
+					lineAsList.remove(9);
+					lineAsList.remove(10);
+					lineAsList.remove(11);
+					if(lineAsList.size() > 21) {
+						ArrayList<String> result = new ArrayList<>(lineAsList.subList(0, 19));
+						CSVUtils.writeLine(writer, result);
+					}
+					else {
+						ArrayList<String> result = new ArrayList<>(lineAsList.subList(0, 19));
+						CSVUtils.writeLine(writer, result);
+					}
+				}
+				catch(IndexOutOfBoundsException e) {
+					
+					e.printStackTrace();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
+	public static void writeCSV(List<String> data, FileWriter writer) {
+		try {
+			CSVUtils.writeLine(writer, data);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private static List<String> convertToList(String[] line){
+		List<String> result = new ArrayList<>();
+		for(String element : line) {
+			result.add(element);
+		}
+		return result;
+	}
+	
+	private static String[] formatLocation(String postalCodeAndState) {
+		String[] result = new String[2];
+		try {
+			String[] splittedLocation = postalCodeAndState.split(" ");
+			result[0] = splittedLocation[0] + " " + splittedLocation[1];
+			result[1] = splittedLocation[2];
+			return result;
+		}
+		catch(IndexOutOfBoundsException e) {
+			result[0] = postalCodeAndState;
+			result[1] = "NA";
+			return result;
+		}
+		
+		
+	}
+	
+	private static void createSalesByDayFile(FileWriter writer) {
+		Map<String, Double> result = new HashMap<>();
+		try {
+			List<Integer> cols = new ArrayList<>();
+			cols.add(10);
+			cols.add(4);
+			List<List<String>> dims = readFile2d("C:\\ISGG\\Hämtade Filer\\Kundregister.csv", cols);
+			for(List<String> e : dims) {
+				try {
+					if(result.keySet().contains(e.get(0))) {
+						Double price = Double.parseDouble(e.get(1));
+						Double newPrice = result.get(e.get(0)) + price;
+						result.put(e.get(0), newPrice);
+					}
+					else {
+						result.put(e.get(0), Double.parseDouble(e.get(1)));
+					}
+				} catch(IndexOutOfBoundsException e2) {
+					e2.printStackTrace();
+				} catch(NumberFormatException e3) {
+					e3.printStackTrace();
+				} catch(NullPointerException e4) {
+					e4.printStackTrace();
+				}
+			}	
+			for(Object date : result.keySet()) {
+				String[] r = {date.toString(),Double.toString(result.get(date))};
+				CSVUtils.writeLine(writer, Arrays.asList(r));
+			}
+			
+			System.out.println("tot obs: " + dims.size());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static List<Integer> sort(List<Integer> list) {
+		if(list.size() > 1) {
+			int half = list.size()/2;
+			List<Integer> h1 = list.subList(0, half);
+			List<Integer> h2 = list.subList(half, list.size());
+			h1 = sort(h1);
+			h2 = sort(h2);
+			return merge(h1, h2, half);
+		}
+		else {
+			return list;
+		}
+	}
+	
+	public static List<Integer> merge(List<Integer> h1, List<Integer> h2, Integer middle) {
+		List<Integer> result = new ArrayList<>();
+		System.out.println("h1 " + h1);
+		System.out.println("h2 " + h2);
+		Integer low = 0;
+		Integer high = 0;
+		while(low < h1.size() && high < h2.size()) {
+			if(h1.get(low) <= h2.get(high)) {
+				result.add(h1.get(low));
+				low++;
+			}
+			else {
+				result.add(h2.get(high));
+				high++;
+			}
+		}
+		while(low < h1.size()) {
+			result.add(h1.get(low));
+			low++;
+		}
+		while(high < h2.size()) {
+			result.add(h2.get(high));
+			high++;
+		}
+		
+		return result;
+	}
+	
+	public static List<Date> sortDate(List<Date> list) {
+		if(list.size() > 1) {
+			int half = list.size()/2;
+			List<Date> h1 = list.subList(0, half);
+			List<Date> h2 = list.subList(half, list.size());
+			h1 = sortDate(h1);
+			h2 = sortDate(h2);
+			return mergeDate(h1, h2, half);
+		}
+		else {
+			return list;
+		}
+	}
+	
+	public static List<Date> mergeDate(List<Date> h1, List<Date> h2, Integer middle) {
+		List<Date> result = new ArrayList<>();
+		System.out.println("h1 " + h1);
+		System.out.println("h2 " + h2);
+		Integer low = 0;
+		Integer high = 0;
+		while(low < h1.size() && high < h2.size()) {
+			if(h1.get(low).before(h2.get(high))) {
+				result.add(h1.get(low));
+				low++;
+			}
+			else {
+				result.add(h2.get(high));
+				high++;
+			}
+		}
+		while(low < h1.size()) {
+			result.add(h1.get(low));
+			low++;
+		}
+		while(high < h2.size()) {
+			result.add(h2.get(high));
+			high++;
+		}
+		
+		return result;
+	}
+	
+	public static void createSortedDayMapping() {
+		FileWriter writer;
+		try {
+			writer = new FileWriter("C:\\ISGG\\Data\\DagSälj.csv");
+			createSalesByDayFile(writer);
+			writer.flush();
+			writer.close();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		
+		try {
+			List<List<String>> result =readFile("C:\\ISGG\\Data\\DagSälj.csv");
+			Map<String, String> mapping = new HashMap<>();
+			List<Date> datesList = new ArrayList<>();
+			DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+			for(List<String> obs : result) {
+				mapping.put(obs.get(0), obs.get(1));
+				try {
+					Date date = formatter.parse(obs.get(0));
+					datesList.add(date);
+				} catch(ParseException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			
+			datesList = sortDate(datesList);
+			System.out.println(datesList);
+			try {
+				writer = new FileWriter("C:\\ISGG\\Data\\DagSälj.csv");
+				for(Date date : datesList) {
+					List<String> obs = new ArrayList<>();
+					String parsedDate = formatter.format(date);
+					String made = mapping.get(parsedDate);
+					obs.add(parsedDate);
+					obs.add(made);
+					System.out.println(obs);
+					CSVUtils.writeLine(writer, obs);
+				}
+				writer.flush();
+				writer.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static Map<String, Map<String, Double>> readStatus() throws FileNotFoundException {
+		int statusPos = 14;
+		int fsgPos = 4;
+		String filePath = "C:\\ISGG\\Hämtade Filer\\";
+		List<Integer> cols = new ArrayList<>();
+		List<List<String>> result = new ArrayList<>();
+		Map<String, Map<String, Double>> statusMapping = new HashMap<>();
+		cols.add(statusPos);
+		cols.add(fsgPos);
+		SalesForce.createAllSales();
+		for(String name : SalesForce.allSales) {
+			Map<String, Double> nameMapping = new HashMap<>();
+			nameMapping.put("Mak", 0.0);
+			nameMapping.put("Fak", 0.0);
+			nameMapping.put("Ord", 0.0);
+			nameMapping.put("Kun", 0.0);
+			String filename = filePath + name + "Sälj.csv";
+			try {
+				result = (readFile2d(filename, cols));
+				for(List<String> r : result) {
+					if(r.size() > 0) {
+						if(r.get(0).equals("Makulerad")) {
+							Double old = nameMapping.get("Mak");
+							Double added = Double.parseDouble(r.get(1));
+							old += added;
+							nameMapping.put("Mak", old);
+						}
+						if(r.get(0).equals("Fakturerad")) {
+							Double old = nameMapping.get("Fak");
+							Double added = Double.parseDouble(r.get(1));
+							old += added;
+							nameMapping.put("Fak", old);
+						}
+						if(r.get(0).equals("Kund")) {
+							Double old = nameMapping.get("Kun");
+							Double added = Double.parseDouble(r.get(1));
+							old += added;
+							nameMapping.put("Kun", old);
+						}
+						if(r.get(0).equals("Order")) {
+							Double old = nameMapping.get("Ord");
+							Double added = Double.parseDouble(r.get(1));
+							old += added;
+							nameMapping.put("Ord", old);
+						}
+					}
+					statusMapping.put(name, nameMapping);
+				}
+				
+			} catch(ArrayIndexOutOfBoundsException e) {
+				e.printStackTrace();
+			} catch(NumberFormatException e) {
+				e.printStackTrace();
+			}
+		}
+		return statusMapping;
+	}
+	
+	public static void writeStatuses() {
+		try {
+			Map<String, Map<String, Double>> r = readStatus();
+			FileWriter writer = new FileWriter("C:\\ISGG\\Data\\StatusSäljare.csv");
+			for(String name : r.keySet()){
+				Map<String, Double> mapping = r.get(name);
+				List<String> resultList = new ArrayList<>();
+				resultList.add(name);
+				resultList.add(mapping.get("Ord").toString());
+				resultList.add(mapping.get("Fak").toString());
+				resultList.add(mapping.get("Kun").toString());
+				resultList.add(mapping.get("Mak").toString());
+				writeCSV(resultList, writer);
+			}
+			writer.flush();
+			writer.close();
+			System.out.println("DONE");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static Map<String, List<List<String>>> readAllCustomerStatus() {
+		// File path of salemen
+		String filePath = "C:\\ISGG\\Hämtade Filer\\";
+		List<Integer> cols = new ArrayList<>();
+		List<List<String>> result = new ArrayList<>();
+		
+		List<List<String>> makList = new ArrayList<>();
+		List<List<String>> fakList = new ArrayList<>();
+		List<List<String>> ordList = new ArrayList<>();
+		List<List<String>> kunList = new ArrayList<>();
+		
+		Map<String, List<List<String>>> statusMapping = new HashMap<>();
+		statusMapping.put("Mak", makList);
+		statusMapping.put("Fak", fakList);
+		statusMapping.put("Ord", ordList);
+		statusMapping.put("Kun", kunList);
+		for(int i = 0; i < 19; i++) {
+			cols.add(i);
+		}
+		SalesForce.createAllSales();
+		for(String name : SalesForce.allSales) {
+			String filename = filePath + name + "Sälj.csv";
+			try {
+				result = (readFile2d(filename, cols));
+				for(List<String> r : result) {
+					if(r.size() > 0) {
+						if(r.get(14).equals("Makulerad")) {
+							List<List<String>> old = statusMapping.get("Mak");
+							old.add(r);
+							statusMapping.put("Mak", old);
+						}
+						if(r.get(14).equals("Fakturerad")) {
+							List<List<String>> old = statusMapping.get("Fak");
+							old.add(r);
+							statusMapping.put("Fak", old);
+						}
+						if(r.get(14).equals("Kund")) {
+							List<List<String>>  old = statusMapping.get("Kun");
+							old.add(r);
+							statusMapping.put("Kun", old);
+						}
+						if(r.get(14).equals("Order")) {
+							List<List<String>>  old = statusMapping.get("Ord");
+							old.add(r);
+							statusMapping.put("Ord", old);
+						}
+					}
+				}
+				
+			} catch(ArrayIndexOutOfBoundsException e) {
+				e.printStackTrace();
+			} catch(NumberFormatException e) {
+				e.printStackTrace();
+			} catch(IOException e) {
+				e.printStackTrace();
+			} catch(IndexOutOfBoundsException e) {
+				e.printStackTrace();
+			}
+		}
+		return statusMapping;
+	}
+	
+	public static void writeCustomersCSV() {
+		try {
+			Map<String, List<List<String>>> r = readAllCustomerStatus();
+			FileWriter orderWriter = new FileWriter("C:\\ISGG\\Data\\Order.csv");
+			FileWriter custWriter  = new FileWriter("C:\\ISGG\\Data\\Kund.csv");
+			FileWriter fakWriter   = new FileWriter("C:\\ISGG\\Data\\Fakturerad.csv");
+			FileWriter makWriter   = new FileWriter("C:\\ISGG\\Data\\Makulerad.csv");
+			
+			List<List<String>> order = r.get("Ord");
+			List<List<String>> cust  = r.get("Kun");
+			List<List<String>> fak   = r.get("Fak");
+			List<List<String>> mak   = r.get("Mak");
+			
+			for(List<String> customer : order){
+				writeCSV(customer, orderWriter);
+			}
+			orderWriter.flush();
+			orderWriter.close();
+			
+			for(List<String> customer : cust) {
+				writeCSV(customer, custWriter);
+			}
+			custWriter.flush();
+			custWriter.close();
+			
+			for(List<String> customer : fak) {
+				writeCSV(customer, fakWriter);
+			}
+			fakWriter.flush();
+			fakWriter.close();
+			
+			for(List<String> customer : mak) {
+				writeCSV(customer, makWriter);
+			}
+			makWriter.flush();
+			makWriter.close();
+			
+			System.out.println("DONE");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void createStats() throws IOException {
+		SalesForce.createAllSales();
+		List<List<String>> result = new ArrayList<>();
+		FileWriter writer = null;
+
+		writer = new FileWriter("C:\\ISGG\\Data\\statSäljare.csv");
+		for(String person : SalesForce.allSales) {
+			try {
+				List<List<String>> salesman = new ArrayList<>();
+				List<String> mainResult = new ArrayList<>();
+				Double fsg = 0.0;
+				Integer amountSold = 0;
+				Double avgPrice = 0.0;
+				salesman = readFile("C:\\ISGG\\Hämtade Filer\\" + person + "Sälj.csv");
+				System.out.println(person);
+				for(List<String> customer : salesman) {
+					try {
+						fsg += Double.parseDouble(customer.get(4));
+						amountSold += 1;
+					}
+					catch(NumberFormatException e) {
+						//e.printStackTrace();
+					}
+				}
+				System.out.println(mainResult);
+				avgPrice = fsg / amountSold;
+				mainResult.add(person);
+				mainResult.add(fsg.toString());
+				mainResult.add(avgPrice.toString());
+				System.out.println(mainResult);
+				writeCSV(mainResult, writer);
+			} catch(Exception e) {}
+			
+		}
+	
+		try {
+			writer.flush();
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	public static void main(String[] args) {
+		try {
+			createStats();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		System.out.println("DONE");
+	}
+}
