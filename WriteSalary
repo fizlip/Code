@@ -1,0 +1,91 @@
+package helper;
+
+import java.util.HashMap;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.*;
+import Drive.CSVFactory;
+
+import org.apache.commons.lang3.StringUtils;
+import org.json.simple.JSONObject;
+
+public class WriteSalary {
+
+	
+	private static Map<String, Double> serviceMapping = new HashMap<>();
+	
+	private static void getServiceMapping() {
+		serviceMapping.put("nyckelbricka", 0.0);
+		serviceMapping.put("låsbytesersättning", 0.0);
+		serviceMapping.put("brandfilt", 210.0);
+		serviceMapping.put("brandsläckare 6 kg, pulver", 602.0);
+		serviceMapping.put("miljöslkumsläckare, 9kg", 968.0);
+		serviceMapping.put("optiskbrandvarnare", 200.0);
+		serviceMapping.put("kolmonoxidvarnare", 269.0);
+	}
+	
+	public static double calculateCommision(String service, String customerPayment) {
+		/* Update service mapping */
+		getServiceMapping();
+		System.out.println(service);
+		double cost = serviceMapping.get(
+				service.toLowerCase());
+		double commision = Double.parseDouble(customerPayment) * 0.8;
+		return commision - cost;
+	}
+	
+	public static void addSalary(String userAdded, double add) {
+		SalesForce.createAllSales();
+		List<List<String>> salaryList;
+		FileWriter writer;
+		boolean found = false;
+		try {
+			salaryList = CSVFactory.readFile("C:\\ISGG\\Data\\Salaries.csv");
+			writer = new FileWriter("C:\\ISGG\\Data\\Salaries.csv");
+			for(List<String> user : salaryList) {
+				if(user.get(0).equalsIgnoreCase(userAdded)) {
+					String username = user.get(0);
+					String salary = user.get(1);
+					String newSalary = Double.toString((Double.parseDouble(salary) + add));
+					user.remove(1);
+					user.add(newSalary);
+					found = true;
+				}
+				CSVFactory.writeCSV(user, writer);
+			}
+			if(!found) {
+				List<String> newUser = new ArrayList<String>();
+				newUser.add(userAdded); newUser.add(Double.toString(add));
+				CSVFactory.writeCSV(newUser, writer);
+			}
+			writer.flush();
+			writer.close();
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static String getSalary(String user) {
+		List<List<String>> list;
+		try {
+			list = CSVFactory.readFile("C:\\ISGG\\Data\\Salaries.csv");
+			for(List<String> u : list) {
+				if(u.get(0).equalsIgnoreCase(user)) {
+					return u.get(1);
+				}
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		return "0";
+	}
+	
+	public static void main(String[] args) {
+		System.out.println(getSalary(StringUtils.capitalize("filipadmin")));
+	}
+	
+}
