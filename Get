@@ -1,0 +1,147 @@
+package helper;
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+import org.json.simple.JSONObject;
+
+public class Get {
+
+	private String search;
+	private String user;
+	
+	private static JSONObject result;
+	private static JSONObject userData;
+	
+	public Get(String search, String user) {
+		this.search = search;
+		this.user = user;
+	}
+	
+	public void updateUser(String user) {
+		this.user = user;
+	}
+	
+	public String search() {
+		/* A general search request */
+		System.out.println("SÖKNING " + search);
+		/* Special WEEK request that is sent by a user at the start of the application session in
+		 * order to get the weekly data, this is DEPRECATED.
+		 */
+		if(search.trim().equals("WEEK")) {
+			return week();
+		}
+		
+		/*
+		 * If search i about sales, give sales menu with all salesmens' years.
+		 */
+		if(search.split(";")[0].toLowerCase().trim().equals("försäljning")) {
+			String daySalesCSV = "C:\\ISGG\\Data\\DagSälj.csv";
+			String salesStatusCSV = "C:\\ISGG\\Data\\StatusSäljare.csv";
+			BufferedReader br = null;
+			String line = "";
+			if(search.split(";")[1].equals("statistik")) {
+				List<List<String>> dateList = new ArrayList<>();
+				List<List<String>> statusList = new ArrayList<>();
+				JSONObject result = new JSONObject();	
+				result.put("list", getCSVData(daySalesCSV));
+				result.put("statusList", getCSVData(salesStatusCSV));
+				return sales(result);
+			}
+			JSONObject result = Register.get("försäljning");
+			return sales(result);
+		}
+		
+		else {
+			Register.currentUser = user;
+			Register.currentAuth = Register.getAuth(user);
+			JSONObject result = (JSONObject) Register.get(search);
+			Register.currentUser = "";
+			//System.out.println("ADDING LÖN " + WriteSalary.getSalary(StringUtils.capitalize(search).trim()));
+			result.put("lön", WriteSalary.getSalary(StringUtils.capitalize(search).trim()));
+			return("SEND START" + result);
+		}
+	}
+	
+	private static List<List<String>> getCSVData(String filename){
+		BufferedReader br = null;
+		List<List<String>> dataList = new ArrayList<>();
+		try {
+			br = new BufferedReader(new FileReader(filename));
+			String line;
+			while((line = br.readLine()) != null) {
+				List<String> obs = new ArrayList<>();
+				String[] elements = line.split(",");
+				for(String e : elements) {
+					obs.add(e);
+				}
+				dataList.add(obs);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if(br != null) {
+				try {
+					br.close();
+				} catch(IOException e) {
+					e.printStackTrace();
+				}
+			}
+		
+		}return dataList;
+	}
+	
+	private String week() {
+		JSONObject sMan = (JSONObject) Register.get(user);
+		JSONObject mData = (JSONObject) sMan.get("meta data");
+		try {
+			JSONObject week = (JSONObject) mData.get("vecka");
+			return "DATA START" + week;
+		}
+		catch(NullPointerException e) {
+			e.printStackTrace();
+		}
+		return "DATA STARTNOTHING";
+	}
+	
+	public String sales(JSONObject result) {
+		if(search.split(";")[1].equals("säljare")) {
+			JSONObject data = new JSONObject();
+			data.put("stat", getCSVData("C:\\ISGG\\Data\\statSäljare.csv"));
+			return ("SALESMEN;försäljning START" + data);					
+		}
+		if(search.split(";")[1].equals("kunder")) {
+			
+			JSONObject customerData = new JSONObject();
+			customerData.put("order", getCSVData("C:\\ISGG\\Data\\Order.csv"));
+			customerData.put("makulerad", getCSVData("C:\\ISGG\\Data\\Makulerad.csv"));
+			customerData.put("kund", getCSVData("C:\\ISGG\\Data\\Kund.csv"));
+			customerData.put("fakturerad", getCSVData("C:\\ISGG\\Data\\Fakturerad.csv"));
+			
+			return("CUSTOMERS;kunddata START" + customerData);
+		}
+		if(search.split(";")[1].equals("statistik")) {
+			return("STATS;försäljning START" + result);
+		}
+		return null;
+	}
+	
+	public String sendResultData() {
+		return ("OTHER;" + search + " START" + result);
+	}
+	
+	public String sendUserData() {
+		return("OTHER;användare" + " START" + userData);
+	}
+	
+	public void getMenuData() {
+		result = Register.get(search);
+		userData = Register.get(user);
+		userData.put("tjänster", Register.getServices());
+	}
+}
